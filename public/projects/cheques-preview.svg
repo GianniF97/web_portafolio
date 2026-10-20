@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img" aria-label="Vista previa técnica del Sistema de Gestión de Cheques 2.0">
+  <rect width="800" height="500" fill="#0B0E14"/>
+  <!-- Retícula técnica -->
+  <g stroke="#161D2A" stroke-width="1">
+    <line x1="0" y1="60" x2="800" y2="60"/>
+    <line x1="0" y1="140" x2="800" y2="140"/>
+    <line x1="0" y1="220" x2="800" y2="220"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="380" x2="800" y2="380"/>
+    <line x1="0" y1="460" x2="800" y2="460"/>
+    <line x1="80" y1="0" x2="80" y2="500"/>
+    <line x1="240" y1="0" x2="240" y2="500"/>
+    <line x1="400" y1="0" x2="400" y2="500"/>
+    <line x1="560" y1="0" x2="560" y2="500"/>
+    <line x1="720" y1="0" x2="720" y2="500"/>
+  </g>
+
+  <!-- Ventana de aplicación web Finanzas y Cheques 2.0 -->
+  <rect x="40" y="32" width="720" height="436" rx="10" fill="#0F141E" stroke="#222D3D" stroke-width="1.5"/>
+  <rect x="40" y="32" width="720" height="38" rx="10" fill="#141B28"/>
+  <circle cx="64" cy="51" r="5" fill="#EF4444"/>
+  <circle cx="82" cy="51" r="5" fill="#F59E0B"/>
+  <circle cx="100" cy="51" r="5" fill="#34D399"/>
+  <text x="124" y="55" fill="#9BA3B0" font-family="monospace" font-size="12">sistema-cheques2.0 — Gestión Financiera &amp; Cartera de Valores</text>
+  <rect x="635" y="42" width="105" height="18" rx="4" fill="#38BDF8" fill-opacity="0.15"/>
+  <text x="687" y="55" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="bold">● VERCEL API</text>
+
+  <!-- Métricas clave de Cartera de Cheques -->
+  <g transform="translate(60, 86)">
+    <!-- KPI 1: En Cartera -->
+    <rect x="0" y="0" width="155" height="68" rx="6" fill="#141B26" stroke="#253246"/>
+    <text x="14" y="22" fill="#8C96A8" font-family="monospace" font-size="10">TOTAL EN CARTERA</text>
+    <text x="14" y="48" fill="#34D399" font-family="sans-serif" font-size="19" font-weight="bold">$18.450.000</text>
+    <text x="14" y="60" fill="#6EE7B7" font-family="monospace" font-size="9">14 cheques activos</text>
+
+    <!-- KPI 2: Por Vencer -->
+    <rect x="175" y="0" width="155" height="68" rx="6" fill="#141B26" stroke="#253246"/>
+    <text x="189" y="22" fill="#8C96A8" font-family="monospace" font-size="10">PRÓXIMO VENCIMIENTO</text>
+    <text x="189" y="48" fill="#F59E0B" font-family="sans-serif" font-size="19" font-weight="bold">$4.210.000</text>
+    <text x="189" y="60" fill="#FDE68A" font-family="monospace" font-size="9">Alerta 5 días hábiles</text>
+
+    <!-- KPI 3: Depositados -->
+    <rect x="350" y="0" width="155" height="68" rx="6" fill="#141B26" stroke="#253246"/>
+    <text x="364" y="22" fill="#8C96A8" font-family="monospace" font-size="10">DEPOSITADOS (MES)</text>
+    <text x="364" y="48" fill="#38BDF8" font-family="sans-serif" font-size="19" font-weight="bold">$9.780.000</text>
+    <text x="364" y="60" fill="#BAE6FD" font-family="monospace" font-size="9">Acreditación 48hs</text>
+
+    <!-- KPI 4: Cobrados / Conciliados -->
+    <rect x="525" y="0" width="155" height="68" rx="6" fill="#141B26" stroke="#253246"/>
+    <text x="539" y="22" fill="#8C96A8" font-family="monospace" font-size="10">CONCILIADOS</text>
+    <text x="539" y="48" fill="#A5B4FC" font-family="sans-serif" font-size="19" font-weight="bold">100% OK</text>
+    <text x="539" y="60" fill="#C7D2FE" font-family="monospace" font-size="9">Sin rechazos</text>
+  </g>
+
+  <!-- Cartera de Cheques Registrados -->
+  <g transform="translate(60, 172)">
+    <rect x="0" y="0" width="680" height="276" rx="8" fill="#121822" stroke="#212C3D"/>
+    
+    <!-- Header tabla -->
+    <rect x="0" y="0" width="680" height="34" rx="8" fill="#17202E"/>
+    <text x="20" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">Nº CHEQUE</text>
+    <text x="130" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">BANCO EMISOR</text>
+    <text x="260" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">VENCIMIENTO</text>
+    <text x="390" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">IMPORTE</text>
+    <text x="530" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">ESTADO CARTERA</text>
+
+    <!-- Fila 1 -->
+    <rect x="0" y="34" width="680" height="38" fill="#0F141E" opacity="0.6"/>
+    <text x="20" y="58" fill="#38BDF8" font-family="monospace" font-size="11">#08849201</text>
+    <text x="130" y="58" fill="#F2F4F8" font-family="sans-serif" font-size="11">Banco Santander</text>
+    <text x="260" y="58" fill="#D1D5DB" font-family="monospace" font-size="11">24/10/2026</text>
+    <text x="390" y="58" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">$ 1.850.000,00</text>
+    <rect x="530" y="44" width="115" height="20" rx="4" fill="#34D399" fill-opacity="0.15"/>
+    <text x="587" y="58" text-anchor="middle" fill="#34D399" font-family="monospace" font-size="9" font-weight="bold">EN CARTERA</text>
+
+    <!-- Fila 2 -->
+    <rect x="0" y="72" width="680" height="38" fill="#121822"/>
+    <text x="20" y="96" fill="#38BDF8" font-family="monospace" font-size="11">#05521934</text>
+    <text x="130" y="96" fill="#F2F4F8" font-family="sans-serif" font-size="11">Banco Galicia</text>
+    <text x="260" y="96" fill="#F59E0B" font-family="monospace" font-size="11" font-weight="bold">20/10/2026 (!)</text>
+    <text x="390" y="96" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">$ 2.360.000,00</text>
+    <rect x="530" y="82" width="115" height="20" rx="4" fill="#F59E0B" fill-opacity="0.15"/>
+    <text x="587" y="96" text-anchor="middle" fill="#F59E0B" font-family="monospace" font-size="9" font-weight="bold">POR VENCER</text>
+
+    <!-- Fila 3 -->
+    <rect x="0" y="110" width="680" height="38" fill="#0F141E" opacity="0.6"/>
+    <text x="20" y="134" fill="#38BDF8" font-family="monospace" font-size="11">#03319082</text>
+    <text x="130" y="134" fill="#F2F4F8" font-family="sans-serif" font-size="11">BBVA Francés</text>
+    <text x="260" y="134" fill="#D1D5DB" font-family="monospace" font-size="11">15/10/2026</text>
+    <text x="390" y="134" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">$ 3.120.000,00</text>
+    <rect x="530" y="120" width="115" height="20" rx="4" fill="#3B82F6" fill-opacity="0.15"/>
+    <text x="587" y="134" text-anchor="middle" fill="#93C5FD" font-family="monospace" font-size="9" font-weight="bold">DEPOSITADO</text>
+
+    <!-- Fila 4 -->
+    <rect x="0" y="148" width="680" height="38" fill="#121822"/>
+    <text x="20" y="172" fill="#38BDF8" font-family="monospace" font-size="11">#09912455</text>
+    <text x="130" y="172" fill="#F2F4F8" font-family="sans-serif" font-size="11">Banco Macro</text>
+    <text x="260" y="172" fill="#D1D5DB" font-family="monospace" font-size="11">12/10/2026</text>
+    <text x="390" y="172" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">$ 890.000,00</text>
+    <rect x="530" y="158" width="115" height="20" rx="4" fill="#A855F7" fill-opacity="0.15"/>
+    <text x="587" y="172" text-anchor="middle" fill="#D8B4FE" font-family="monospace" font-size="9" font-weight="bold">COBRADO</text>
+
+    <!-- Barra de trazabilidad de arquitectura -->
+    <rect x="0" y="196" width="680" height="80" rx="4" fill="#0A0E15"/>
+    <text x="20" y="218" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="bold">// EVOLUCIÓN TÉCNICA 1.0 -> 2.0:</text>
+    <text x="20" y="236" fill="#8C96A8" font-family="monospace" font-size="10">De script Python local a plataforma web serverless con templates Jinja2 y persistencia</text>
+    <text x="20" y="254" fill="#8C96A8" font-family="monospace" font-size="10">Módulo de autenticación de operadores, control de estados y alertas de vencimiento</text>
+  </g>
+</svg>

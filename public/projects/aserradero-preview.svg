@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img" aria-label="Vista previa técnica del Sistema de Gestión de Aserradero">
+  <rect width="800" height="500" fill="#0B0E14"/>
+  <!-- Cuadrícula técnica arquitectónica -->
+  <g stroke="#161D2A" stroke-width="1">
+    <line x1="0" y1="60" x2="800" y2="60"/>
+    <line x1="0" y1="140" x2="800" y2="140"/>
+    <line x1="0" y1="220" x2="800" y2="220"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="380" x2="800" y2="380"/>
+    <line x1="0" y1="460" x2="800" y2="460"/>
+    <line x1="80" y1="0" x2="80" y2="500"/>
+    <line x1="240" y1="0" x2="240" y2="500"/>
+    <line x1="400" y1="0" x2="400" y2="500"/>
+    <line x1="560" y1="0" x2="560" y2="500"/>
+    <line x1="720" y1="0" x2="720" y2="500"/>
+  </g>
+
+  <!-- Ventana de aplicación web / ERP Aserradero -->
+  <rect x="40" y="32" width="720" height="436" rx="10" fill="#0F141E" stroke="#222D3D" stroke-width="1.5"/>
+  <rect x="40" y="32" width="720" height="38" rx="10" fill="#141B28"/>
+  <circle cx="64" cy="51" r="5" fill="#EF4444"/>
+  <circle cx="82" cy="51" r="5" fill="#F59E0B"/>
+  <circle cx="100" cy="51" r="5" fill="#34D399"/>
+  <text x="124" y="55" fill="#9BA3B0" font-family="monospace" font-size="12">sistema_aserradero — Panel de Control &amp; Trazabilidad (Flask + DB Relacional)</text>
+  <rect x="630" y="42" width="112" height="18" rx="4" fill="#34D399" fill-opacity="0.15"/>
+  <text x="686" y="55" text-anchor="middle" fill="#34D399" font-family="monospace" font-size="10" font-weight="bold">● SISTEMA ACTIVO</text>
+
+  <!-- Barra de métricas superiores del aserradero -->
+  <g transform="translate(60, 86)">
+    <!-- Tarjeta 1: Rollos en Playón -->
+    <rect x="0" y="0" width="155" height="68" rx="6" fill="#141B26" stroke="#253246"/>
+    <text x="14" y="22" fill="#8C96A8" font-family="monospace" font-size="10">INVENTARIO PLAYÓN</text>
+    <text x="14" y="48" fill="#F2F4F8" font-family="sans-serif" font-size="20" font-weight="bold">1.420 u.</text>
+    <text x="14" y="60" fill="#34D399" font-family="monospace" font-size="9">Pino Eliottis / Taeda</text>
+
+    <!-- Tarjeta 2: Cubicación Total -->
+    <rect x="175" y="0" width="155" height="68" rx="6" fill="#141B26" stroke="#253246"/>
+    <text x="189" y="22" fill="#8C96A8" font-family="monospace" font-size="10">VOLUMEN CUBICADO</text>
+    <text x="189" y="48" fill="#34D399" font-family="sans-serif" font-size="20" font-weight="bold">482,6 m³</text>
+    <text x="189" y="60" fill="#9BA3B0" font-family="monospace" font-size="9">Fórmula Geométrica</text>
+
+    <!-- Tarjeta 3: Órdenes de Corte -->
+    <rect x="350" y="0" width="155" height="68" rx="6" fill="#141B26" stroke="#253246"/>
+    <text x="364" y="22" fill="#8C96A8" font-family="monospace" font-size="10">SIERRA PRINCIPAL</text>
+    <text x="364" y="48" fill="#F59E0B" font-family="sans-serif" font-size="20" font-weight="bold">8 Órdenes</text>
+    <text x="364" y="60" fill="#FDE68A" font-family="monospace" font-size="9">En línea de corte</text>
+
+    <!-- Tarjeta 4: Remitos de Despacho -->
+    <rect x="525" y="0" width="155" height="68" rx="6" fill="#141B26" stroke="#253246"/>
+    <text x="539" y="22" fill="#8C96A8" font-family="monospace" font-size="10">REMITOS INTERNOS</text>
+    <text x="539" y="48" fill="#A5B4FC" font-family="sans-serif" font-size="20" font-weight="bold">24 Emitidos</text>
+    <text x="539" y="60" fill="#C7D2FE" font-family="monospace" font-size="9">Con trazabilidad</text>
+  </g>
+
+  <!-- Tabla de Trazabilidad y Gestión de Rollos -->
+  <g transform="translate(60, 172)">
+    <rect x="0" y="0" width="680" height="276" rx="8" fill="#121822" stroke="#212C3D"/>
+    
+    <!-- Encabezado de tabla -->
+    <rect x="0" y="0" width="680" height="34" rx="8" fill="#17202E"/>
+    <text x="20" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">LOTE / ROLLO</text>
+    <text x="130" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">ESPECIE</text>
+    <text x="230" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">DIÁM (cm)</text>
+    <text x="320" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">LARGO (m)</text>
+    <text x="420" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">VOLUMEN (m³)</text>
+    <text x="540" y="22" fill="#9BA3B0" font-family="monospace" font-size="10" font-weight="bold">ESTADO PROCESO</text>
+
+    <!-- Fila 1 -->
+    <rect x="0" y="34" width="680" height="38" fill="#0F141E" opacity="0.6"/>
+    <text x="20" y="58" fill="#34D399" font-family="monospace" font-size="11">#ROL-2026-089</text>
+    <text x="130" y="58" fill="#F2F4F8" font-family="sans-serif" font-size="11">Pino Taeda</text>
+    <text x="230" y="58" fill="#D1D5DB" font-family="monospace" font-size="11">38 cm</text>
+    <text x="320" y="58" fill="#D1D5DB" font-family="monospace" font-size="11">4,20 m</text>
+    <text x="420" y="58" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">0,476 m³</text>
+    <rect x="540" y="44" width="100" height="20" rx="4" fill="#34D399" fill-opacity="0.15"/>
+    <text x="590" y="58" text-anchor="middle" fill="#34D399" font-family="monospace" font-size="9" font-weight="bold">DESPACHADO</text>
+
+    <!-- Fila 2 -->
+    <rect x="0" y="72" width="680" height="38" fill="#121822"/>
+    <text x="20" y="96" fill="#34D399" font-family="monospace" font-size="11">#ROL-2026-090</text>
+    <text x="130" y="96" fill="#F2F4F8" font-family="sans-serif" font-size="11">Pino Eliottis</text>
+    <text x="230" y="96" fill="#D1D5DB" font-family="monospace" font-size="11">42 cm</text>
+    <text x="320" y="96" fill="#D1D5DB" font-family="monospace" font-size="11">3,60 m</text>
+    <text x="420" y="96" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">0,498 m³</text>
+    <rect x="540" y="82" width="100" height="20" rx="4" fill="#F59E0B" fill-opacity="0.15"/>
+    <text x="590" y="96" text-anchor="middle" fill="#F59E0B" font-family="monospace" font-size="9" font-weight="bold">EN CORTE</text>
+
+    <!-- Fila 3 -->
+    <rect x="0" y="110" width="680" height="38" fill="#0F141E" opacity="0.6"/>
+    <text x="20" y="134" fill="#34D399" font-family="monospace" font-size="11">#ROL-2026-091</text>
+    <text x="130" y="134" fill="#F2F4F8" font-family="sans-serif" font-size="11">Eucalipto Grandis</text>
+    <text x="230" y="134" fill="#D1D5DB" font-family="monospace" font-size="11">35 cm</text>
+    <text x="320" y="134" fill="#D1D5DB" font-family="monospace" font-size="11">4,00 m</text>
+    <text x="420" y="134" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">0,385 m³</text>
+    <rect x="540" y="120" width="100" height="20" rx="4" fill="#3B82F6" fill-opacity="0.15"/>
+    <text x="590" y="134" text-anchor="middle" fill="#93C5FD" font-family="monospace" font-size="9" font-weight="bold">EN PLAYÓN</text>
+
+    <!-- Fila 4 -->
+    <rect x="0" y="148" width="680" height="38" fill="#121822"/>
+    <text x="20" y="172" fill="#34D399" font-family="monospace" font-size="11">#ROL-2026-092</text>
+    <text x="130" y="172" fill="#F2F4F8" font-family="sans-serif" font-size="11">Pino Taeda</text>
+    <text x="230" y="172" fill="#D1D5DB" font-family="monospace" font-size="11">45 cm</text>
+    <text x="320" y="172" fill="#D1D5DB" font-family="monospace" font-size="11">4,50 m</text>
+    <text x="420" y="172" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">0,715 m³</text>
+    <rect x="540" y="158" width="100" height="20" rx="4" fill="#F59E0B" fill-opacity="0.15"/>
+    <text x="590" y="172" text-anchor="middle" fill="#F59E0B" font-family="monospace" font-size="9" font-weight="bold">EN CORTE</text>
+
+    <!-- Pie técnico de especificación DER / Trazabilidad -->
+    <rect x="0" y="196" width="680" height="80" rx="4" fill="#0A0E15"/>
+    <text x="20" y="218" fill="#A5B4FC" font-family="monospace" font-size="10" font-weight="bold">// MODELADO DER &amp; INGENIERÍA DE SOFTWARE:</text>
+    <text x="20" y="236" fill="#8C96A8" font-family="monospace" font-size="10">Entidades: LotesRollos ──&lt; OrdenesCorte ──&lt; EscuadriasDetalle ── RemitosDespacho</text>
+    <text x="20" y="254" fill="#8C96A8" font-family="monospace" font-size="10">Garantía: Matriz de Trazabilidad de Requerimientos + Integridad Referencial SQL</text>
+  </g>
+</svg>

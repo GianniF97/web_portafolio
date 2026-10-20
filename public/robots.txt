@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Reemplazar con el dominio definitivo al publicar en producción:
+# Sitemap: https://tu-dominio-definitivo.dev/sitemap.xml

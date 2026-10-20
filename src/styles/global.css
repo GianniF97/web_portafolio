@@ -1,0 +1,2128 @@
+/* ==========================================================================
+   PORTAFOLIO DE INGENIERÍA — GIANNI FERRARI (@GianniF97)
+   Dirección Visual: Réplica Fiel de Brikken+Co (One Page Website Award)
+   Paleta Exclusiva:
+     - Marfil: #F4F1E8 (Fondo principal)
+     - Gris verdoso: #E5E8DF (Fondo secundario / paneles)
+     - Texto oscuro: #252923 (Casi negro / carbón forestal)
+     - Texto secundario: #696E64 (Gris oliva)
+     - Verde salvia: #78866A (Color de acento)
+     - Verde bosque: #414C3C (Acento oscuro para botones y énfasis)
+     - Bordes: #D2D5CA (Divisores y grilla estructural)
+   Animaciones: Telón de entrada inicial, escultura 3D interactiva, revelación
+                palabra por palabra con scroll, grilla escalonada (md:mt-24),
+                sección sticky 300vh, acordeón animado y firma monumental.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. RESET Y CONFIGURACIÓN BASE
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  font-weight: 400;
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* --------------------------------------------------------------------------
+   2. SISTEMA DE TOKENS (PALETA EXCLUSIVA VERDE & MARFIL)
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  --bg-primary: #F4F1E8;
+  --bg-secondary: #E5E8DF;
+  --text-primary: #252923;
+  --text-secondary: #696E64;
+  --accent: #78866A;
+  --accent-dark: #414C3C;
+  --border: #D2D5CA;
+
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-subtle: #F9F8F3;
+  --bg-nav: rgba(244, 241, 232, 0.94);
+  --bg-dark-section: #252923;
+  --text-dark-section: #F4F1E8;
+
+  --text-muted: #82877D;
+  --text-faint: #9FA499;
+  --text-inverse: #F4F1E8;
+
+  --border-hairline: rgba(37, 41, 35, 0.12);
+  --border-strong: #252923;
+  --border-focus: #414C3C;
+
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --container-max: 1440px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-btn: 5px; /* Estándar exacto de Brikken */
+  --radius-md: 6px;
+
+  --shadow-card: 0 4px 16px rgba(37, 41, 35, 0.05);
+  --shadow-hover: 0 10px 30px rgba(37, 41, 35, 0.09);
+}
+
+[data-theme="dark"] {
+  --bg-primary: #1C201A;
+  --bg-secondary: #252B22;
+  --text-primary: #F4F1E8;
+  --text-secondary: #A6ADA2;
+  --accent: #8E9E7F;
+  --accent-dark: #64735B;
+  --border: #383F34;
+
+  --bg-surface: #222720;
+  --bg-card: #222720;
+  --bg-card-subtle: #1F241E;
+  --bg-nav: rgba(28, 32, 26, 0.94);
+  --bg-dark-section: #151813;
+  --text-dark-section: #F4F1E8;
+
+  --text-muted: #8E968A;
+  --text-faint: #676F63;
+  --text-inverse: #1C201A;
+
+  --border-hairline: rgba(244, 241, 232, 0.12);
+  --border-strong: #F4F1E8;
+  --border-focus: #8E9E7F;
+
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   3. ANIMACIÓN DE ENTRADA INICIAL: TELÓN DE DOS MITADES (CURTAIN LOADER)
+   -------------------------------------------------------------------------- */
+.brikken-curtain-container {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.curtain-half {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: calc(50% + 1px);
+  background-color: var(--accent-dark);
+  transition: transform 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+  will-change: transform;
+}
+
+.curtain-top {
+  top: 0;
+  transform: translateY(0);
+}
+
+.curtain-top.slide-up {
+  transform: translateY(-100%);
+}
+
+.curtain-bottom {
+  bottom: 0;
+  transform: translateY(0);
+}
+
+.curtain-bottom.slide-down {
+  transform: translateY(100%);
+}
+
+.curtain-center-brand {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: opacity 0.35s ease;
+}
+
+.curtain-center-brand.fade-out {
+  opacity: 0;
+}
+
+.curtain-logo-wrap {
+  transform: scale(1.15);
+  animation: logoPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes logoPulse {
+  from { transform: scale(1.1); }
+  to { transform: scale(1.2); }
+}
+
+.curtain-loader-bar {
+  width: 140px;
+  height: 2px;
+  background-color: rgba(244, 241, 232, 0.2);
+  margin-top: 1.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.curtain-loader-fill {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-primary);
+  transform: translateX(-100%);
+  animation: curtainFill 0.75s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes curtainFill {
+  to { transform: translateX(0); }
+}
+
+/* --------------------------------------------------------------------------
+   4. GRILLA ESTRUCTURAL ARQUITECTÓNICA DE 4 COLUMNAS (BRIKKEN GRID)
+   -------------------------------------------------------------------------- */
+.brikken-app-shell {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.brikken-structural-grid {
+  position: fixed;
+  inset: 0;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  pointer-events: none;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  opacity: 0.45;
+}
+
+.brikken-structural-grid .grid-line {
+  border-right: 1px solid var(--border);
+  height: 100%;
+}
+
+.brikken-structural-grid .grid-line:last-child {
+  border-right: none;
+}
+
+.brikken-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 768px) {
+  .brikken-container {
+    padding: 0 2.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .brikken-container {
+    padding: 0 3.5rem;
+  }
+}
+
+.skip-link {
+  position: absolute;
+  top: -120px;
+  left: 1.5rem;
+  background: var(--accent-dark);
+  color: var(--bg-primary);
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  text-decoration: none;
+  z-index: 99999;
+  border-radius: var(--radius-xs);
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  outline: 2px solid var(--border-focus);
+}
+
+/* --------------------------------------------------------------------------
+   5. LOGO GF Y NAVEGACIÓN SUPERIOR (TOP NAVBAR)
+   -------------------------------------------------------------------------- */
+.brikken-top-bar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: var(--bg-nav);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.brikken-top-bar.is-scrolled {
+  box-shadow: 0 4px 18px rgba(37, 41, 35, 0.04);
+}
+
+.brikken-nav-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4.5rem;
+  gap: 1.5rem;
+}
+
+/* Monograma Personal GF en esquina superior izquierda */
+.navbar-logo-slot {
+  display: flex;
+  align-items: center;
+}
+
+.gf-brand-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.gf-monogram-emblem {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.gf-brand-identity:hover .gf-monogram-emblem {
+  transform: scale(1.05);
+}
+
+.gf-monogram-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.gf-brand-typography {
+  display: flex;
+  flex-direction: column;
+}
+
+.gf-brand-name {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.gf-brand-descriptor {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Navegación central estilo Brikken */
+.navbar-center-links {
+  display: none;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+@media (min-width: 960px) {
+  .navbar-center-links {
+    display: flex;
+  }
+}
+
+.nav-brikken-link {
+  padding: 0.45rem 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--text-secondary);
+  border-radius: var(--radius-btn);
+  transition: all 0.15s ease;
+}
+
+.nav-brikken-link:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+}
+
+.nav-brikken-link.is-active {
+  color: var(--text-primary);
+  font-weight: 700;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+}
+
+/* Controles de la derecha: Reloj, selector de tema y botón CTA */
+.navbar-right-slot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.navbar-clock-badge {
+  display: none;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+@media (min-width: 640px) {
+  .navbar-clock-badge {
+    display: flex;
+  }
+}
+
+.clock-beacon-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent-dark);
+  box-shadow: 0 0 0 2px rgba(120, 134, 106, 0.25);
+  animation: beaconPulse 2.4s infinite ease-in-out;
+}
+
+.clock-zone-tag {
+  color: var(--text-faint);
+  font-size: 0.625rem;
+}
+
+.navbar-theme-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.navbar-theme-button:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border-color: var(--text-secondary);
+}
+
+/* Botón estilo exacto Brikken+Co: rounded-[5px] font-mono text-[14px] tracking-widest */
+.navbar-brikken-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem;
+  background-color: var(--accent-dark);
+  color: var(--bg-primary);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--accent-dark);
+  transition: all 0.18s ease;
+}
+
+.navbar-brikken-cta-btn:hover {
+  background-color: var(--text-primary);
+  border-color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.navbar-burger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+@media (min-width: 960px) {
+  .navbar-burger-button {
+    display: none;
+  }
+}
+
+/* Drawer móvil */
+.brikken-mobile-panel {
+  position: fixed;
+  inset: 0;
+  top: 4.5rem;
+  background-color: var(--bg-primary);
+  z-index: 99990;
+  padding: 2rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  overflow-y: auto;
+  animation: mobilePanelFade 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes mobilePanelFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-panel-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobile-panel-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  text-decoration: none;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.mobile-panel-link.is-active {
+  border-color: var(--accent-dark);
+  background-color: var(--bg-surface);
+}
+
+.mobile-panel-link .link-num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+.mobile-panel-bottom {
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mobile-meta-text {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   6. SECCIÓN HERO DE BRIKKEN+CO CON ESCULTURA 3D CENTRAL
+   -------------------------------------------------------------------------- */
+.brikken-hero-monumental {
+  position: relative;
+  min-height: calc(100vh - 4.5rem);
+  padding: 3rem 0 4.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+@media (min-width: 992px) {
+  .brikken-hero-monumental {
+    min-height: calc(100vh - 4.5rem);
+    padding: 3.5rem 0 4rem;
+  }
+}
+
+.brikken-hero-grid-overlay {
+  position: absolute;
+  inset: 0;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  pointer-events: none;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  opacity: 0.45;
+}
+
+.hero-grid-col {
+  border-right: 1px solid var(--border);
+  height: 100%;
+}
+
+.hero-grid-col:last-child {
+  border-right: none;
+}
+
+.hero-inner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  z-index: 2;
+  gap: 2rem;
+}
+
+/* Banner de Gran Escala Superior */
+.hero-banner-headline-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.hero-top-eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.eyebrow-bracket {
+  color: var(--accent-dark);
+}
+
+.hero-banner-display-text {
+  font-family: var(--font-display);
+  font-size: clamp(2.35rem, 6.5vw, 5.5rem);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Ranura central de escultura 3D */
+.hero-center-sculpture-slot {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 320px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .hero-center-sculpture-slot {
+    height: 380px;
+  }
+}
+
+.brikken-3d-sculpture-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fila inferior: Proposición & Ficha técnica */
+.hero-bottom-statement-block {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: end;
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+}
+
+@media (min-width: 860px) {
+  .hero-bottom-statement-block {
+    grid-template-columns: 1.25fr 0.95fr;
+    gap: 4rem;
+  }
+}
+
+.hero-statement-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hero-statement-p {
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 1.4vw, 1.375rem);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  max-width: 540px;
+}
+
+.hero-statement-p strong {
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.hero-action-btns-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.brikken-pill-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  background-color: var(--accent-dark);
+  color: var(--bg-primary);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--accent-dark);
+  transition: all 0.18s ease;
+}
+
+.brikken-pill-btn-primary:hover {
+  background-color: var(--text-primary);
+  border-color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.brikken-pill-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.4rem;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: all 0.18s ease;
+}
+
+.brikken-pill-btn-secondary:hover {
+  background-color: var(--bg-surface);
+  border-color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+/* Ficha técnica rápida de la derecha */
+.hero-quick-ledger-column {
+  width: 100%;
+}
+
+.quick-ledger-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ledger-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.ledger-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-dark);
+}
+
+.ledger-id {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+.ledger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  list-style: none;
+}
+
+.ledger-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.ledger-k {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.ledger-v {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+}
+
+.ledger-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--accent-dark);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ledger-link:hover {
+  text-decoration: underline;
+}
+
+.ledger-socials-row {
+  display: flex;
+  gap: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+
+.ledger-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.ledger-social-link:hover {
+  color: var(--text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   7. SECCIÓN ABOUT US CON ANIMACIÓN WORD-BY-WORD SCROLL FILL
+   -------------------------------------------------------------------------- */
+.brikken-about-scrub-section {
+  position: relative;
+  padding: 6rem 0;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+@media (min-width: 992px) {
+  .brikken-about-scrub-section {
+    padding: 9rem 0;
+  }
+}
+
+.about-scrub-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+@media (min-width: 992px) {
+  .about-scrub-layout {
+    flex-direction: row;
+    gap: 5rem;
+    align-items: flex-start;
+  }
+}
+
+.about-scrub-sidebar {
+  flex-shrink: 0;
+  padding-top: 0.5rem;
+}
+
+.about-kicker-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.about-scrub-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+  max-width: 1190px;
+}
+
+/* Párrafo con efecto de revelación de color por palabra al scrollear */
+.about-manifesto-paragraph {
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 3.8vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.scrub-word {
+  display: inline;
+}
+
+/* Bullets duales con puntos cuadrados de Brikken */
+.about-bullets-dual-cols {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .about-bullets-dual-cols {
+    flex-direction: row;
+    gap: 4rem;
+  }
+}
+
+.about-bullets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  list-style: none;
+  flex: 1;
+}
+
+.about-bullet-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.bullet-square-icon {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-dark);
+  flex-shrink: 0;
+  margin-top: 0.45rem;
+}
+
+.bullet-item-text {
+  font-family: var(--font-display);
+  font-size: clamp(0.9375rem, 1.3vw, 1.25rem);
+  line-height: 1.45;
+  color: var(--text-primary);
+}
+
+.bullet-item-text strong {
+  font-weight: 700;
+}
+
+.about-quote-stamp-strip {
+  padding: 1.75rem 2rem;
+  background-color: var(--bg-secondary);
+  border-left: 3px solid var(--accent-dark);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quote-stamp-text {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.quote-stamp-author {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-dark);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   8. SECCIÓN OUR WORK / PROYECTOS (GRILLA ESCALONADA ASIMÉTRICA BRIKKEN)
+   -------------------------------------------------------------------------- */
+.brikken-work-section {
+  position: relative;
+  padding: 6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 992px) {
+  .brikken-work-section {
+    padding: 8rem 0;
+  }
+}
+
+.brikken-work-header {
+  margin-bottom: 3.5rem;
+}
+
+.section-eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: 0.875rem;
+}
+
+/* Titular Gigante Monumental: text-[80px] md:text-[160px] xl:text-[278px] */
+.brikken-monumental-work-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.25rem, 12vw, 11rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  word-break: break-word;
+}
+
+.brikken-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.filter-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-pill-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.filter-pill-btn.is-active {
+  background-color: var(--accent-dark);
+  border-color: var(--accent-dark);
+  color: var(--bg-primary);
+}
+
+.filter-badge-num {
+  font-size: 0.6875rem;
+  opacity: 0.85;
+}
+
+/* Grilla Asimétrica Escalonada de 2 Columnas */
+.brikken-staggered-work-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3.5rem;
+}
+
+@media (min-width: 900px) {
+  .brikken-staggered-work-grid {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 3rem;
+    row-gap: 5rem;
+  }
+
+  /* Desplazamiento icónico de la segunda tarjeta hacia abajo (md:mt-24) */
+  .article-right-offset {
+    margin-top: 5rem;
+  }
+
+  /* Tercera tarjeta a todo el ancho (col-span-2) */
+  .article-full-width {
+    grid-column: 1 / -1;
+    margin-top: 2rem;
+  }
+}
+
+.brikken-work-article {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.work-card-media-box {
+  position: relative;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+
+.work-media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brikken-work-article:hover .work-media-img {
+  transform: scale(1.03);
+}
+
+.work-media-badge {
+  position: absolute;
+  bottom: 0.875rem;
+  left: 0.875rem;
+  padding: 0.3rem 0.65rem;
+  background-color: rgba(37, 41, 35, 0.88);
+  color: #F4F1E8;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius-xs);
+}
+
+.work-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 630px;
+}
+
+.work-card-meta-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.work-cat-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+}
+
+.work-status-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-secondary);
+}
+
+.work-item-headline {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2vw, 1.875rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+.work-item-lead {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--accent-dark);
+}
+
+.work-item-desc {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.work-item-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-top: 0.25rem;
+}
+
+.brikken-tech-chip {
+  padding: 0.2rem 0.55rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-secondary);
+}
+
+.work-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+/* Tarjeta Full Width en Grid Interna */
+.work-full-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .work-full-grid {
+    grid-template-columns: 1.1fr 1fr;
+    gap: 3.5rem;
+  }
+}
+
+/* Ledger de Proyectos Secundarios */
+.brikken-archive-ledger-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  border-top: 1px solid var(--border);
+  padding-top: 3.5rem;
+}
+
+@media (min-width: 768px) {
+  .brikken-archive-ledger-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.archive-ledger-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.archive-card-title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.archive-card-desc {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.archive-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-dark);
+  text-decoration: none;
+  align-self: flex-start;
+  margin-top: 0.25rem;
+}
+
+.archive-link:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   9. SECCIÓN STICKY 300vh CAPABILITIES (SERVICES SCROLLTELLING)
+   -------------------------------------------------------------------------- */
+.brikken-services-sticky-section {
+  position: relative;
+  background-color: var(--bg-dark-section);
+  color: var(--text-dark-section);
+}
+
+/* Versión Desktop: Track de 300vh con viewport sticky de 100vh */
+.services-desktop-track {
+  display: none;
+  position: relative;
+  height: 280vh;
+}
+
+@media (min-width: 900px) {
+  .services-desktop-track {
+    display: block;
+  }
+}
+
+.services-sticky-viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--bg-dark-section);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.services-grid-overlay {
+  position: absolute;
+  inset: 0;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-left: 1px solid rgba(244, 241, 232, 0.08);
+  border-right: 1px solid rgba(244, 241, 232, 0.08);
+  pointer-events: none;
+}
+
+.services-grid-line {
+  border-right: 1px solid rgba(244, 241, 232, 0.08);
+  height: 100%;
+}
+
+.services-center-display {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.services-stack-words {
+  display: flex;
+  flex-direction: column;
+  line-height: 0.88;
+  text-align: center;
+}
+
+.service-big-word {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 11vw, 10.5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: rgba(244, 241, 232, 0.95);
+  user-select: none;
+}
+
+.services-sync-kicker {
+  margin-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+}
+
+/* Tarjetas flotantes animadas */
+.services-floating-card {
+  position: absolute;
+  width: 340px;
+  background-color: rgba(30, 35, 28, 0.95);
+  border: 1px solid rgba(210, 213, 202, 0.2);
+  border-radius: var(--radius-btn);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  z-index: 20;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  will-change: transform, opacity;
+}
+
+.card-right {
+  top: 15%;
+  right: 6%;
+}
+
+.card-left {
+  top: 40%;
+  left: 6%;
+}
+
+.card-right-bottom {
+  bottom: 12%;
+  right: 12%;
+}
+
+.floating-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-kicker-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.card-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+.floating-card-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #F4F1E8;
+  letter-spacing: -0.01em;
+}
+
+.floating-card-desc {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: rgba(244, 241, 232, 0.7);
+}
+
+/* Versión móvil limpia */
+.services-mobile-stack {
+  display: flex;
+  flex-direction: column;
+  padding: 4rem 1.25rem;
+  gap: 3rem;
+}
+
+@media (min-width: 900px) {
+  .services-mobile-stack {
+    display: none;
+  }
+}
+
+.services-mobile-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.services-mobile-sub {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.services-mobile-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.services-mobile-card {
+  background-color: rgba(244, 241, 232, 0.05);
+  border: 1px solid rgba(210, 213, 202, 0.2);
+  border-radius: var(--radius-btn);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   10. SECCIÓN STACK & CAPACIDADES
+   -------------------------------------------------------------------------- */
+.brikken-section {
+  position: relative;
+  padding: 6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header-block {
+  margin-bottom: 3.5rem;
+}
+
+.section-display-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 3.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.section-lead-description {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 65ch;
+}
+
+.tech-domains-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.tech-domain-block {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.domain-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.domain-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.domain-code-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.5rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--accent-dark);
+}
+
+.domain-title-text {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.domain-desc-text {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.domain-items-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .domain-items-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .domain-items-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tech-item-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: all 0.15s ease;
+}
+
+.tech-item-card:hover {
+  background-color: var(--bg-surface);
+  border-color: var(--accent-dark);
+}
+
+.tech-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tech-item-id {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tech-icon-holder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--text-primary);
+}
+
+.tech-item-name {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tech-stage-tag {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-xs);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--accent-dark);
+}
+
+.tech-item-context {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   11. SECCIÓN FAQ / PREGUNTAS (ACORDEÓN INTERACTIVO BRIKKEN)
+   -------------------------------------------------------------------------- */
+.brikken-faq-section {
+  position: relative;
+  padding: 6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-inner-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.faq-header-block {
+  margin-bottom: 3.5rem;
+}
+
+.faq-display-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.faq-lead-desc {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.faq-accordion-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.faq-accordion-item {
+  border-top: 1px solid var(--text-primary);
+  padding: 1.75rem 0;
+}
+
+.faq-accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+}
+
+.faq-question-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 1.6vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.faq-icon-cross {
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.cross-line {
+  position: absolute;
+  background-color: var(--text-primary);
+  transition: transform 0.25s ease;
+}
+
+.cross-line.horizontal {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  transform: translateY(-50%);
+}
+
+.cross-line.vertical {
+  left: 50%;
+  top: 0;
+  height: 100%;
+  width: 1.5px;
+  transform: translateX(-50%);
+}
+
+.faq-icon-cross.is-open .cross-line.vertical {
+  transform: translateX(-50%) rotate(90deg) scale(0);
+}
+
+.faq-answer-collapse {
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.faq-answer-content {
+  padding-top: 1.25rem;
+}
+
+.faq-answer-p {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+.answer-lead {
+  font-weight: 700;
+}
+
+.answer-detail {
+  color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   12. SECCIÓN CONTACTO Y FOOTER CON FIRMA MONUMENTAL
+   -------------------------------------------------------------------------- */
+.brikken-contact-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .brikken-contact-card {
+    padding: 4rem 3.5rem;
+  }
+}
+
+.contact-headline-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-display-headline {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.contact-lead-desc {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 65ch;
+}
+
+.contact-email-action-block {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .contact-email-action-block {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.email-address-display {
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 1.8vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  word-break: break-all;
+}
+
+.email-address-display:hover {
+  color: var(--accent-dark);
+}
+
+.contact-button-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-copy-address {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.15rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-copy-address:hover {
+  border-color: var(--accent-dark);
+  background-color: var(--bg-surface);
+}
+
+.btn-copy-address.is-copied {
+  background-color: var(--accent-dark);
+  color: var(--bg-primary);
+  border-color: var(--accent-dark);
+}
+
+.contact-verified-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+  align-items: center;
+}
+
+.verified-channel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.15rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.verified-channel-link:hover {
+  border-color: var(--accent-dark);
+  background-color: var(--bg-secondary);
+}
+
+/* Pie de página Brikken */
+.brikken-footer {
+  position: relative;
+  background-color: var(--bg-primary);
+  padding-top: 5rem;
+  padding-bottom: 2.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.footer-top-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  padding-bottom: 4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 768px) {
+  .footer-top-columns {
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+.footer-brand-bio {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer-brand-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.footer-brand-sub {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.footer-column-title {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: 1rem;
+}
+
+.footer-links-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.footer-link-item a {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.footer-link-item a:hover {
+  color: var(--text-primary);
+}
+
+/* Wordmark Gigante en el fondo del Footer */
+.footer-wordmark-container {
+  padding: 4rem 0 3rem;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.footer-monumental-wordmark {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 12vw, 10.5rem);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  opacity: 0.12;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.footer-bottom-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-secondary);
+}
+
+.footer-back-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  padding: 0.35rem 0.75rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.footer-back-top-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  background-color: var(--bg-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   13. REVEAL AL SCROLLEAR & ACCESIBILIDAD
+   -------------------------------------------------------------------------- */
+[data-scroll-observer="ready"] .reveal-section,
+[data-scroll-observer="ready"] .reveal-card {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+[data-scroll-observer="ready"] .reveal-section.is-visible,
+[data-scroll-observer="ready"] .reveal-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-scroll-observer="ready"] .reveal-section,
+  [data-scroll-observer="ready"] .reveal-card {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

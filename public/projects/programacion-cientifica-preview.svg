@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img" aria-label="Vista previa técnica de Programación Científica y Algoritmos Numéricos">
+  <rect width="800" height="500" fill="#0B0E14"/>
+  <!-- Retícula técnica -->
+  <g stroke="#161D2A" stroke-width="1">
+    <line x1="0" y1="60" x2="800" y2="60"/>
+    <line x1="0" y1="140" x2="800" y2="140"/>
+    <line x1="0" y1="220" x2="800" y2="220"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="380" x2="800" y2="380"/>
+    <line x1="0" y1="460" x2="800" y2="460"/>
+    <line x1="80" y1="0" x2="80" y2="500"/>
+    <line x1="240" y1="0" x2="240" y2="500"/>
+    <line x1="400" y1="0" x2="400" y2="500"/>
+    <line x1="560" y1="0" x2="560" y2="500"/>
+    <line x1="720" y1="0" x2="720" y2="500"/>
+  </g>
+
+  <!-- Ventana de laboratorio computacional -->
+  <rect x="40" y="32" width="720" height="436" rx="10" fill="#0F141E" stroke="#222D3D" stroke-width="1.5"/>
+  <rect x="40" y="32" width="720" height="38" rx="10" fill="#141B28"/>
+  <circle cx="64" cy="51" r="5" fill="#EF4444"/>
+  <circle cx="82" cy="51" r="5" fill="#F59E0B"/>
+  <circle cx="100" cy="51" r="5" fill="#34D399"/>
+  <text x="124" y="55" fill="#9BA3B0" font-family="monospace" font-size="12">Programacion_cientifica — Métodos Numéricos &amp; Análisis Algorítmico (Python)</text>
+  <rect x="630" y="42" width="112" height="18" rx="4" fill="#F59E0B" fill-opacity="0.15"/>
+  <text x="686" y="55" text-anchor="middle" fill="#F59E0B" font-family="monospace" font-size="10" font-weight="bold">● SCI-COMPUTE</text>
+
+  <!-- Panel izquierdo: Editor de código con algoritmo numérico -->
+  <g transform="translate(60, 84)">
+    <rect x="0" y="0" width="370" height="364" rx="6" fill="#0A0E17" stroke="#1E2838"/>
+    <rect x="0" y="0" width="370" height="28" rx="6" fill="#121824"/>
+    <text x="14" y="19" fill="#8C96A8" font-family="monospace" font-size="11">metodos_numericos.py</text>
+
+    <g font-family="monospace" font-size="11" fill="#D1D5DB" transform="translate(14, 46)">
+      <text y="0"><tspan fill="#F472B6">import</tspan> math</text>
+      <text y="18"><tspan fill="#F472B6">from</tspan> typing <tspan fill="#F472B6">import</tspan> Callable, List, Tuple</text>
+      <text y="42"><tspan fill="#38BDF8">def</tspan> <tspan fill="#FBBF24">newton_raphson</tspan>(f: Callable, df: Callable,</text>
+      <text y="58">                   x0: float, tol: float = 1e-7,</text>
+      <text y="74">                   max_iter: int = 100) -> Tuple[float, int]:</text>
+      <text y="94">    <tspan fill="#64748B">"""Aproximación numérica de raíces"""</tspan></text>
+      <text y="112">    x = x0</text>
+      <text y="130">    <tspan fill="#F472B6">for</tspan> i <tspan fill="#F472B6">in</tspan> range(max_iter):</text>
+      <text y="148">        fx = f(x)</text>
+      <text y="166">        <tspan fill="#F472B6">if</tspan> abs(fx) &lt; tol:</text>
+      <text y="184">            <tspan fill="#F472B6">return</tspan> x, i</text>
+      <text y="202">        dfx = df(x)</text>
+      <text y="220">        <tspan fill="#F472B6">if</tspan> dfx == 0:</text>
+      <text y="238">            <tspan fill="#EF4444">raise</tspan> ZeroDivisionError</text>
+      <text y="256">        x = x - fx / dfx</text>
+      <text y="274">    <tspan fill="#F472B6">return</tspan> x, max_iter</text>
+      <text y="296" fill="#34D399"># Convergencia cuadrática lograda</text>
+    </g>
+  </g>
+
+  <!-- Panel derecho: Gráfico de convergencia y métricas analíticas -->
+  <g transform="translate(450, 84)">
+    <rect x="0" y="0" width="290" height="364" rx="6" fill="#111722" stroke="#202A3B"/>
+    <text x="16" y="24" fill="#38BDF8" font-family="monospace" font-size="11" font-weight="bold">CURVA DE CONVERGENCIA</text>
+
+    <!-- Gráfica de error / iteración -->
+    <rect x="16" y="40" width="258" height="150" rx="4" fill="#0A0E15" stroke="#1A2332"/>
+    <!-- Ejes -->
+    <line x1="36" y1="50" x2="36" y2="170" stroke="#334155" stroke-width="1.5"/>
+    <line x1="36" y1="170" x2="260" y2="170" stroke="#334155" stroke-width="1.5"/>
+    <!-- Curva de convergencia logarítmica descendente -->
+    <path d="M 36 60 Q 70 140 120 162 T 250 168" fill="none" stroke="#34D399" stroke-width="2.5"/>
+    <!-- Puntos de muestreo -->
+    <circle cx="36" cy="60" r="3.5" fill="#F59E0B"/>
+    <circle cx="65" cy="115" r="3.5" fill="#F59E0B"/>
+    <circle cx="95" cy="150" r="3.5" fill="#34D399"/>
+    <circle cx="140" cy="164" r="3.5" fill="#34D399"/>
+    <circle cx="210" cy="168" r="3.5" fill="#34D399"/>
+
+    <text x="44" y="65" fill="#F59E0B" font-family="monospace" font-size="9">iter 0 (error = 1.4e-1)</text>
+    <text x="148" y="156" fill="#34D399" font-family="monospace" font-size="9">iter 4 (error &lt; 1e-8)</text>
+
+    <!-- Fichas de métodos analizados -->
+    <g transform="translate(16, 206)">
+      <rect x="0" y="0" width="258" height="42" rx="4" fill="#141C28"/>
+      <text x="10" y="16" fill="#F2F4F8" font-family="sans-serif" font-size="11" font-weight="bold">Álgebra Lineal &amp; Matrices</text>
+      <text x="10" y="32" fill="#8C96A8" font-family="monospace" font-size="9">Eliminación Gaussiana, LU, Jacobi</text>
+    </g>
+
+    <g transform="translate(16, 256)">
+      <rect x="0" y="0" width="258" height="42" rx="4" fill="#141C28"/>
+      <text x="10" y="16" fill="#F2F4F8" font-family="sans-serif" font-size="11" font-weight="bold">Integración Numérica</text>
+      <text x="10" y="32" fill="#8C96A8" font-family="monospace" font-size="9">Regla de Simpson, Trapecio compuesto</text>
+    </g>
+
+    <g transform="translate(16, 306)">
+      <rect x="0" y="0" width="258" height="42" rx="4" fill="#141C28"/>
+      <text x="10" y="16" fill="#F2F4F8" font-family="sans-serif" font-size="11" font-weight="bold">Interpolación &amp; Ajuste</text>
+      <text x="10" y="32" fill="#8C96A8" font-family="monospace" font-size="9">Polinomios de Lagrange, Mínimos Cuadrados</text>
+    </g>
+  </g>
+</svg>

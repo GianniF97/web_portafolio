@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img" aria-label="Vista previa técnica de la plataforma sistema_fotos desplegada en Vercel">
+  <rect width="800" height="500" fill="#0B0E14"/>
+  <!-- Retícula de fondo -->
+  <g stroke="#161D2A" stroke-width="1">
+    <line x1="0" y1="60" x2="800" y2="60"/>
+    <line x1="0" y1="140" x2="800" y2="140"/>
+    <line x1="0" y1="220" x2="800" y2="220"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="380" x2="800" y2="380"/>
+    <line x1="0" y1="460" x2="800" y2="460"/>
+    <line x1="80" y1="0" x2="80" y2="500"/>
+    <line x1="240" y1="0" x2="240" y2="500"/>
+    <line x1="400" y1="0" x2="400" y2="500"/>
+    <line x1="560" y1="0" x2="560" y2="500"/>
+    <line x1="720" y1="0" x2="720" y2="500"/>
+  </g>
+
+  <!-- Ventana de aplicación web / Galería en producción -->
+  <rect x="40" y="32" width="720" height="436" rx="10" fill="#0F141E" stroke="#222D3D" stroke-width="1.5"/>
+  <rect x="40" y="32" width="720" height="38" rx="10" fill="#141B28"/>
+  <circle cx="64" cy="51" r="5" fill="#EF4444"/>
+  <circle cx="82" cy="51" r="5" fill="#F59E0B"/>
+  <circle cx="100" cy="51" r="5" fill="#34D399"/>
+  <text x="124" y="55" fill="#9BA3B0" font-family="monospace" font-size="12">sistema-fotos.vercel.app — Producción Live Web App (Frontend + Backend)</text>
+  <rect x="620" y="42" width="120" height="18" rx="4" fill="#10B981" fill-opacity="0.15"/>
+  <text x="680" y="55" text-anchor="middle" fill="#34D399" font-family="monospace" font-size="10" font-weight="bold">● LIVE EN VERCEL</text>
+
+  <!-- Barra de navegación de la app -->
+  <g transform="translate(60, 84)">
+    <rect x="0" y="0" width="680" height="38" rx="6" fill="#151C28" stroke="#212C3D"/>
+    <rect x="14" y="11" width="16" height="16" rx="3" fill="none" stroke="#34D399" stroke-width="1.6"/>
+    <circle cx="22" cy="19" r="3.5" fill="none" stroke="#34D399" stroke-width="1.5"/>
+    <text x="38" y="24" fill="#F2F4F8" font-family="sans-serif" font-size="13" font-weight="bold">Sistema de Fotos</text>
+    <rect x="220" y="7" width="70" height="24" rx="4" fill="#34D399" fill-opacity="0.18"/>
+    <text x="255" y="23" text-anchor="middle" fill="#34D399" font-family="sans-serif" font-size="11" font-weight="bold">Galería</text>
+    <text x="325" y="23" fill="#8C96A8" font-family="sans-serif" font-size="11">Álbumes</text>
+    <text x="400" y="23" fill="#8C96A8" font-family="sans-serif" font-size="11">Subir Fotos</text>
+
+    <!-- Botón Subir -->
+    <rect x="570" y="6" width="96" height="26" rx="4" fill="#34D399"/>
+    <text x="618" y="23" text-anchor="middle" fill="#041D15" font-family="sans-serif" font-size="11" font-weight="bold">+ Subir Foto</text>
+  </g>
+
+  <!-- Grilla de fotos / Cards interactivas -->
+  <g transform="translate(60, 134)">
+    <!-- Tarjeta Foto 1 -->
+    <rect x="0" y="0" width="210" height="190" rx="8" fill="#141B26" stroke="#253246"/>
+    <!-- Mockup de imagen fotográfica con gradiente paisajístico -->
+    <rect x="10" y="10" width="190" height="110" rx="6" fill="#1E293B"/>
+    <circle cx="60" cy="45" r="16" fill="#FBBF24" opacity="0.8"/>
+    <polygon points="10,120 70,65 130,120" fill="#334155"/>
+    <polygon points="90,120 150,55 200,120" fill="#475569"/>
+    <text x="14" y="142" fill="#F2F4F8" font-family="sans-serif" font-size="12" font-weight="bold">Cordillera_Atardecer.jpg</text>
+    <text x="14" y="158" fill="#8C96A8" font-family="monospace" font-size="10">2400x1600 · 3.2 MB</text>
+    <rect x="14" y="166" width="60" height="16" rx="3" fill="#34D399" fill-opacity="0.15"/>
+    <text x="44" y="178" text-anchor="middle" fill="#34D399" font-family="monospace" font-size="8" font-weight="bold">PAISAJE</text>
+
+    <!-- Tarjeta Foto 2 -->
+    <rect x="235" y="0" width="210" height="190" rx="8" fill="#141B26" stroke="#253246"/>
+    <rect x="245" y="10" width="190" height="110" rx="6" fill="#1A2230"/>
+    <ellipse cx="340" cy="65" rx="35" ry="35" fill="#38BDF8" opacity="0.3"/>
+    <rect x="310" y="45" width="60" height="40" rx="4" fill="#38BDF8" opacity="0.7"/>
+    <circle cx="340" cy="65" r="10" fill="#0F172A"/>
+    <text x="249" y="142" fill="#F2F4F8" font-family="sans-serif" font-size="12" font-weight="bold">Arquitectura_Moderna.jpg</text>
+    <text x="249" y="158" fill="#8C96A8" font-family="monospace" font-size="10">3840x2160 · 4.8 MB</text>
+    <rect x="249" y="166" width="70" height="16" rx="3" fill="#38BDF8" fill-opacity="0.15"/>
+    <text x="284" y="178" text-anchor="middle" fill="#38BDF8" font-family="monospace" font-size="8" font-weight="bold">ESTRUCTURA</text>
+
+    <!-- Tarjeta Foto 3 -->
+    <rect x="470" y="0" width="210" height="190" rx="8" fill="#141B26" stroke="#253246"/>
+    <rect x="480" y="10" width="190" height="110" rx="6" fill="#19202D"/>
+    <circle cx="575" cy="60" r="28" fill="#A855F7" opacity="0.4"/>
+    <circle cx="575" cy="60" r="14" fill="#C084FC" opacity="0.8"/>
+    <text x="484" y="142" fill="#F2F4F8" font-family="sans-serif" font-size="12" font-weight="bold">Macro_Detalle_Lente.jpg</text>
+    <text x="484" y="158" fill="#8C96A8" font-family="monospace" font-size="10">1920x1080 · 2.1 MB</text>
+    <rect x="484" y="166" width="60" height="16" rx="3" fill="#C084FC" fill-opacity="0.15"/>
+    <text x="514" y="178" text-anchor="middle" fill="#C084FC" font-family="monospace" font-size="8" font-weight="bold">RETRATO</text>
+  </g>
+
+  <!-- Panel de Infraestructura y Despliegue -->
+  <g transform="translate(60, 342)">
+    <rect x="0" y="0" width="680" height="106" rx="6" fill="#111722" stroke="#222D3E"/>
+    <text x="20" y="24" fill="#34D399" font-family="monospace" font-size="11" font-weight="bold">ARQUITECTURA DE PRODUCCIÓN // DESPLIEGUE CONTINUO:</text>
+    <text x="20" y="44" fill="#E2E8F0" font-family="sans-serif" font-size="12">Frontend reactivo desacoplado con servidor backend para almacenamiento y metadatos de imágenes.</text>
+    <text x="20" y="66" fill="#8C96A8" font-family="monospace" font-size="11">Despliegue: https://sistema-fotos.vercel.app · Repositorio: github.com/GianniF97/sistema_fotos</text>
+    <text x="20" y="86" fill="#38BDF8" font-family="monospace" font-size="10">✓ CI/CD automático con Vercel · Optimización de carga visual · Responsive mobile-first</text>
+  </g>
+</svg>
