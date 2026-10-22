@@ -19,14 +19,6 @@ import {
 export const Hero: React.FC = memo(() => {
   return (
     <section id="inicio" className="brikken-hero-monumental" aria-labelledby="hero-main-title">
-      {/* Grilla hairline de fondo de 4 columnas */}
-      <div className="brikken-hero-grid-overlay" aria-hidden="true">
-        <div className="hero-grid-col" />
-        <div className="hero-grid-col" />
-        <div className="hero-grid-col" />
-        <div className="hero-grid-col" />
-      </div>
-
       <div className="brikken-container hero-inner-container">
         {/* Banner Superior: Gran Título / Wordmark de Identidad */}
         <div className="hero-banner-headline-wrap">

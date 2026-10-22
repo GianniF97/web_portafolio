@@ -17,20 +17,20 @@ export const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('inicio');
   const [theme, setTheme] = useState<ThemeMode>(() => {
     if (typeof window !== 'undefined') {
-      // Limpiar claves antiguas que forzaban modo oscuro en sesiones previas
       window.localStorage.removeItem('gf-portfolio-theme');
-      const saved = window.localStorage.getItem('gf-theme-brikken');
+      window.localStorage.removeItem('gf-theme-brikken');
+      const saved = window.localStorage.getItem('gf-theme-forest');
       if (saved === 'light' || saved === 'dark') {
         return saved;
       }
     }
-    return 'light'; // Por defecto absoluto: paleta Marfil (#F4F1E8) y verdes de referencia
+    return 'dark'; // Nueva paleta de identidad: Verde carbón/negro (#101714) con acento verde lima (#B8E986)
   });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     try {
-      window.localStorage.setItem('gf-theme-brikken', theme);
+      window.localStorage.setItem('gf-theme-forest', theme);
     } catch {
       // Ignorar si localStorage está restringido
     }
@@ -145,7 +145,7 @@ export const App: React.FC = () => {
       />
 
       {/* Contenido principal en la secuencia arquitectónica de Brikken+Co */}
-      <main id="main-content" tabIndex={-1}>
+      <main id="main-content" tabIndex={-1} className="brikken-main-content">
         <Hero />
         <About />
         <Projects />

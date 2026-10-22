@@ -79,7 +79,7 @@ export const About: React.FC = memo(() => {
                     style={{
                       color: isActivated
                         ? 'var(--text-primary)'
-                        : 'rgba(105, 110, 100, 0.35)',
+                        : 'var(--text-faint)',
                       transition: 'color 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
                   >
