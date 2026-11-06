@@ -27,7 +27,7 @@ const faqItems: FaqItem[] = [
     question: '¿Tenés proyectos que se puedan probar en vivo actualmente?',
     leadAnswer: 'Sí, tanto en producción como con código abierto documentado.',
     detailAnswer:
-      'El Sistema de Galería y Catálogo Fotográfico está publicado y operativo en Vercel (sistema-fotos.vercel.app). El Sistema de Gestión de Aserradero y la Cartera de Cheques 2.0 cuentan con repositorios abiertos en GitHub con documentación técnica formal y diagramas de arquitectura.',
+      'Sí, cuento con plataformas en producción como la estación de radio online Radio Gravity (radiogravity.web.app) y el sitio web institucional de Biofuego (biofuego.web.app). Asimismo, el Sistema de Gestión de Aserradero y proyectos analíticos cuentan con repositorios abiertos en GitHub con documentación técnica formal y diagramas de arquitectura.',
   },
   {
     id: 'disponibilidad',

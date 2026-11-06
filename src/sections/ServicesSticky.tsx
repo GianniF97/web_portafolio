@@ -113,7 +113,7 @@ export const ServicesSticky: React.FC = memo(() => {
             </div>
             <h3 className="floating-card-title">Backend Robusto en Flask</h3>
             <p className="floating-card-desc">
-              Implementación de arquitectura MVC en Python. Algoritmos de cálculo volumétrico exacto (m³) para aserraderos y control transaccional de cartera financiera de cheques.
+              Implementación de arquitectura MVC en Python. Algoritmos de cálculo volumétrico exacto (m³) para aserraderos y control transaccional de datos con persistencia relacional.
             </p>
           </div>
 

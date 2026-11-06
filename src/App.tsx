@@ -109,14 +109,25 @@ export const App: React.FC = () => {
       }
     );
 
-    const targets = document.querySelectorAll(
-      '.reveal-section:not(.is-visible), .reveal-card:not(.is-visible)'
-    );
-    targets.forEach((el) => revealObserver.observe(el));
+    const observeTargets = () => {
+      const targets = document.querySelectorAll(
+        '.reveal-section:not(.is-visible), .reveal-card:not(.is-visible)'
+      );
+      targets.forEach((el) => revealObserver.observe(el));
+    };
+
+    observeTargets();
+
+    const mutationObserver = new MutationObserver(() => {
+      observeTargets();
+    });
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       observer.disconnect();
       revealObserver.disconnect();
+      mutationObserver.disconnect();
     };
   }, []);
 

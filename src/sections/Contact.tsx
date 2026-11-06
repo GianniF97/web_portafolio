@@ -122,12 +122,22 @@ export const Contact: React.FC = memo(() => {
               )}
 
               <a
-                href="https://sistema-fotos.vercel.app"
+                href="https://radiogravity.web.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="verified-channel-link"
               >
-                <span>Demo: Galería Vercel</span>
+                <span>Radio Gravity (En vivo)</span>
+                <ArrowUpRightIcon size={11} />
+              </a>
+
+              <a
+                href="https://biofuego.web.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="verified-channel-link"
+              >
+                <span>Biofuego (Web oficial)</span>
                 <ArrowUpRightIcon size={11} />
               </a>
             </div>

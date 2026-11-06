@@ -48,6 +48,16 @@ a {
   text-decoration: none;
 }
 
+/* Foco accesible para navegación por teclado (WCAG 2.2 AA) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 /* --------------------------------------------------------------------------
    2. SISTEMA DE TOKENS (PALETA CENTRALIZADA)
    -------------------------------------------------------------------------- */
@@ -919,6 +929,12 @@ main#main-content,
   text-decoration: underline;
 }
 
+.ledger-links-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
 .ledger-socials-row {
   display: flex;
   gap: 1rem;
@@ -1404,6 +1420,32 @@ main#main-content,
 .archive-link:hover {
   color: #C8F09A;
   text-decoration: underline;
+}
+
+.archive-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.brikken-archive-ledger-row.is-standalone-grid {
+  border-top: none;
+  padding-top: 0;
+}
+
+.brikken-empty-projects-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background-color: var(--bg-surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-btn);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
 }
 
 /* --------------------------------------------------------------------------

@@ -28,11 +28,12 @@ export const Footer: React.FC = memo(() => {
             <h3 className="footer-column-title">Índice del Portafolio</h3>
             <ul className="footer-links-list">
               <li className="footer-link-item"><a href="#inicio">00. Inicio</a></li>
-              <li className="footer-link-item"><a href="#proyectos">01. Proyectos</a></li>
-              <li className="footer-link-item"><a href="#sobre-mi">02. Sobre mí</a></li>
-              <li className="footer-link-item"><a href="#tecnologias">03. Stack</a></li>
-              <li className="footer-link-item"><a href="#aprendizaje">04. Bitácora</a></li>
-              <li className="footer-link-item"><a href="#contacto">05. Contacto</a></li>
+              <li className="footer-link-item"><a href="#sobre-mi">01. Sobre mí</a></li>
+              <li className="footer-link-item"><a href="#proyectos">02. Proyectos</a></li>
+              <li className="footer-link-item"><a href="#capacidades">03. Capacidades</a></li>
+              <li className="footer-link-item"><a href="#tecnologias">04. Stack</a></li>
+              <li className="footer-link-item"><a href="#faq">05. Preguntas</a></li>
+              <li className="footer-link-item"><a href="#contacto">06. Contacto</a></li>
             </ul>
           </div>
 

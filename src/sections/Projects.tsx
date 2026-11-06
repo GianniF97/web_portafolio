@@ -1,15 +1,15 @@
 import React, { useState, useMemo, memo } from 'react';
-import { projectsData, type ProjectStatus } from '../data/portfolioData';
+import { projectsData, type ProjectStatus, type ProjectItem } from '../data/portfolioData';
 import { ArrowUpRightIcon, GitHubIcon } from '../components/Icons';
 
 type FilterOption = 'Todos' | ProjectStatus;
 
 /**
- * Sección de Proyectos de Brikken+Co ("Our Work"):
- * - Titular gigante a escala monumental (text-[64px] md:text-[140px] xl:text-[220px]).
+ * Sección de Proyectos ("Our Work"):
+ * - Titular gigante a escala monumental.
  * - Grilla asimétrica escalonada de 2 columnas donde la segunda tarjeta está desplazada hacia abajo (md:mt-24).
  * - Tercera tarjeta a todo el ancho inferior.
- * - Tarjetas técnicas compactas al pie.
+ * - Tarjetas técnicas compactas al pie para proyectos de laboratorio e investigación.
  */
 export const Projects: React.FC = memo(() => {
   const [selectedStatus, setSelectedStatus] = useState<FilterOption>('Todos');
@@ -31,17 +31,19 @@ export const Projects: React.FC = memo(() => {
     });
   }, [selectedStatus]);
 
+  const isTopThree = (p: ProjectItem) =>
+    p.id === 'sistema-aserradero' || p.id === 'biofuego' || p.id === 'radiogravity';
+
   const flagship = filteredProjects.find((p) => p.id === 'sistema-aserradero');
-  const cheques = filteredProjects.find((p) => p.id === 'sistema-cheques-2');
-  const fotos = filteredProjects.find((p) => p.id === 'sistema-fotos-vercel');
-  const archiveProjects = filteredProjects.filter(
-    (p) => p.id === 'programacion-cientifica' || p.id === 'git-practicas-profesionales'
-  );
+  const biofuego = filteredProjects.find((p) => p.id === 'biofuego');
+  const radiogravity = filteredProjects.find((p) => p.id === 'radiogravity');
+  const archiveProjects = filteredProjects.filter((p) => !isTopThree(p));
+  const hasTopThree = Boolean(flagship || biofuego || radiogravity);
 
   return (
     <section id="proyectos" className="brikken-work-section reveal-section" aria-labelledby="work-title">
       <div className="brikken-container">
-        {/* Cabecera Brikken con Titular Monumental Gigante */}
+        {/* Cabecera Brikken con Titular Monumental */}
         <div className="brikken-work-header">
           <div className="section-eyebrow-row">
             <span aria-hidden="true">[</span>
@@ -53,7 +55,7 @@ export const Projects: React.FC = memo(() => {
             Proyectos
           </h2>
 
-          {/* Filtros Limpios con Contadores */}
+          {/* Filtros con Contadores */}
           <div className="brikken-filter-bar" role="group" aria-label="Filtrar proyectos por estado">
             {filterOptions.map((opt) => {
               const isSelected = selectedStatus === opt.label;
@@ -85,6 +87,7 @@ export const Projects: React.FC = memo(() => {
                   width={flagship.image.width}
                   height={flagship.image.height}
                   loading="lazy"
+                  decoding="async"
                   className="work-media-img"
                 />
                 <span className="work-media-badge">FLASK (MVC) · MODELADO DER · CUBICACIÓN M³</span>
@@ -124,44 +127,56 @@ export const Projects: React.FC = memo(() => {
             </article>
           )}
 
-          {/* ARTÍCULO 2 (Columna Derecha Desplazada hacia abajo - md:mt-24): CHEQUES 2.0 */}
-          {cheques && (
-            <article className="brikken-work-article article-right-offset reveal-card" aria-label={`Proyecto: ${cheques.title}`}>
+          {/* ARTÍCULO 2 (Columna Derecha Desplazada hacia abajo - md:mt-24): BIOFUEGO */}
+          {biofuego && (
+            <article className="brikken-work-article article-right-offset reveal-card" aria-label={`Proyecto: ${biofuego.title}`}>
               <div className="work-card-media-box">
                 <img
-                  src={cheques.image.src}
-                  alt={cheques.image.alt}
-                  width={cheques.image.width}
-                  height={cheques.image.height}
+                  src={biofuego.image.src}
+                  alt={biofuego.image.alt}
+                  width={biofuego.image.width}
+                  height={biofuego.image.height}
                   loading="lazy"
+                  decoding="async"
                   className="work-media-img"
                 />
-                <span className="work-media-badge">FINANZAS · VERCEL · SEMÁFORO DE ALERTAS</span>
+                <span className="work-media-badge">PRODUCCIÓN · FIREBASE · WEB INSTITUCIONAL</span>
               </div>
 
               <div className="work-card-details">
                 <div className="work-card-meta-line">
-                  <span className="work-cat-tag">{cheques.category}</span>
-                  <span className="work-status-tag">{cheques.status}</span>
+                  <span className="work-cat-tag">{biofuego.category}</span>
+                  <span className="work-status-tag">{biofuego.status}</span>
                 </div>
 
-                <h3 className="work-item-headline">{cheques.title}</h3>
-                <p className="work-item-lead">{cheques.subtitle}</p>
-                <p className="work-item-desc">{cheques.problem}</p>
+                <h3 className="work-item-headline">{biofuego.title}</h3>
+                <p className="work-item-lead">{biofuego.subtitle}</p>
+                <p className="work-item-desc">{biofuego.problem}</p>
 
                 <div className="work-item-chips">
-                  {cheques.technologies.map((t) => (
+                  {biofuego.technologies.map((t) => (
                     <span key={t} className="brikken-tech-chip">{t}</span>
                   ))}
                 </div>
 
                 <div className="work-item-actions">
-                  {cheques.repoUrl && (
+                  {biofuego.demoUrl && (
                     <a
-                      href={cheques.repoUrl}
+                      href={biofuego.demoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="brikken-pill-btn-primary"
+                    >
+                      <span>Visitar Sitio Web</span>
+                      <ArrowUpRightIcon size={12} />
+                    </a>
+                  )}
+                  {biofuego.repoUrl && (
+                    <a
+                      href={biofuego.repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="brikken-pill-btn-secondary"
                     >
                       <GitHubIcon size={14} />
                       <span>Ver Repositorio</span>
@@ -173,53 +188,54 @@ export const Projects: React.FC = memo(() => {
             </article>
           )}
 
-          {/* ARTÍCULO 3 (Ancho Completo Inferior): FOTOS VERCEL */}
-          {fotos && (
-            <article className="brikken-work-article article-full-width reveal-card" aria-label={`Proyecto: ${fotos.title}`}>
+          {/* ARTÍCULO 3 (Ancho Completo Inferior): RADIO GRAVITY */}
+          {radiogravity && (
+            <article className="brikken-work-article article-full-width reveal-card" aria-label={`Proyecto: ${radiogravity.title}`}>
               <div className="work-full-grid">
                 <div className="work-card-media-box">
                   <img
-                    src={fotos.image.src}
-                    alt={fotos.image.alt}
-                    width={fotos.image.width}
-                    height={fotos.image.height}
+                    src={radiogravity.image.src}
+                    alt={radiogravity.image.alt}
+                    width={radiogravity.image.width}
+                    height={radiogravity.image.height}
                     loading="lazy"
+                    decoding="async"
                     className="work-media-img"
                   />
-                  <span className="work-media-badge">PRODUCCIÓN · VERCEL CLOUD · NEXT.JS / REACT</span>
+                  <span className="work-media-badge">STREAMING EN VIVO · PWA · THREE.JS &amp; WEBGL</span>
                 </div>
 
                 <div className="work-card-details">
                   <div className="work-card-meta-line">
-                    <span className="work-cat-tag">{fotos.category}</span>
-                    <span className="work-status-tag">{fotos.status}</span>
+                    <span className="work-cat-tag">{radiogravity.category}</span>
+                    <span className="work-status-tag">{radiogravity.status}</span>
                   </div>
 
-                  <h3 className="work-item-headline">{fotos.title}</h3>
-                  <p className="work-item-lead">{fotos.subtitle}</p>
-                  <p className="work-item-desc">{fotos.problem}</p>
+                  <h3 className="work-item-headline">{radiogravity.title}</h3>
+                  <p className="work-item-lead">{radiogravity.subtitle}</p>
+                  <p className="work-item-desc">{radiogravity.problem}</p>
 
                   <div className="work-item-chips">
-                    {fotos.technologies.map((t) => (
+                    {radiogravity.technologies.map((t) => (
                       <span key={t} className="brikken-tech-chip">{t}</span>
                     ))}
                   </div>
 
                   <div className="work-item-actions">
-                    {fotos.demoUrl && (
+                    {radiogravity.demoUrl && (
                       <a
-                        href={fotos.demoUrl}
+                        href={radiogravity.demoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="brikken-pill-btn-primary"
                       >
-                        <span>Demo en Producción</span>
+                        <span>Escuchar Radio en Vivo</span>
                         <ArrowUpRightIcon size={12} />
                       </a>
                     )}
-                    {fotos.repoUrl && (
+                    {radiogravity.repoUrl && (
                       <a
-                        href={fotos.repoUrl}
+                        href={radiogravity.repoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="brikken-pill-btn-secondary"
@@ -237,7 +253,7 @@ export const Projects: React.FC = memo(() => {
 
           {/* FILA DE PROYECTOS TÉCNICOS ADICIONALES */}
           {archiveProjects.length > 0 && (
-            <div className="brikken-archive-ledger-row">
+            <div className={`brikken-archive-ledger-row ${!hasTopThree ? 'is-standalone-grid' : ''}`}>
               {archiveProjects.map((p) => (
                 <div key={p.id} className="archive-ledger-card reveal-card">
                   <div className="work-card-meta-line">
@@ -245,26 +261,46 @@ export const Projects: React.FC = memo(() => {
                     <span className="work-status-tag">{p.status}</span>
                   </div>
                   <h4 className="archive-card-title">{p.title}</h4>
-                  <p className="archive-card-desc">{p.goal}</p>
+                  <p className="archive-card-desc">{p.problem || p.goal}</p>
                   <div className="work-item-chips">
                     {p.technologies.map((t) => (
                       <span key={t} className="brikken-tech-chip">{t}</span>
                     ))}
                   </div>
-                  {p.repoUrl && (
-                    <a
-                      href={p.repoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="archive-link"
-                    >
-                      <GitHubIcon size={13} />
-                      <span>Ver código en GitHub</span>
-                      <ArrowUpRightIcon size={11} />
-                    </a>
-                  )}
+                  <div className="archive-card-actions">
+                    {p.demoUrl && (
+                      <a
+                        href={p.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="archive-link"
+                      >
+                        <span>Visitar demo</span>
+                        <ArrowUpRightIcon size={11} />
+                      </a>
+                    )}
+                    {p.repoUrl && (
+                      <a
+                        href={p.repoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="archive-link"
+                      >
+                        <GitHubIcon size={13} />
+                        <span>Ver código en GitHub</span>
+                        <ArrowUpRightIcon size={11} />
+                      </a>
+                    )}
+                  </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* ESTADO VACÍO CUANDO NO HAY COINCIDENCIAS */}
+          {filteredProjects.length === 0 && (
+            <div className="brikken-empty-projects-state">
+              <p>No se encontraron proyectos en este estado.</p>
             </div>
           )}
         </div>

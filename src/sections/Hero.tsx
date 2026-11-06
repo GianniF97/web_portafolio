@@ -78,16 +78,27 @@ export const Hero: React.FC = memo(() => {
                   <span className="ledger-v">Python / Flask (MVC) · PostgreSQL / MySQL · React</span>
                 </li>
                 <li className="ledger-item">
-                  <span className="ledger-k">DEMO ACTIVA</span>
-                  <a
-                    href="https://sistema-fotos.vercel.app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ledger-link"
-                  >
-                    <span>sistema-fotos.vercel.app</span>
-                    <ArrowUpRightIcon size={11} />
-                  </a>
+                  <span className="ledger-k">EN PRODUCCIÓN</span>
+                  <div className="ledger-links-stack">
+                    <a
+                      href="https://radiogravity.web.app"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ledger-link"
+                    >
+                      <span>radiogravity.web.app</span>
+                      <ArrowUpRightIcon size={11} />
+                    </a>
+                    <a
+                      href="https://biofuego.web.app"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ledger-link"
+                    >
+                      <span>biofuego.web.app</span>
+                      <ArrowUpRightIcon size={11} />
+                    </a>
+                  </div>
                 </li>
               </ul>
 
