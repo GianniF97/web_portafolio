@@ -7,5 +7,12 @@ export default defineConfig({
     target: 'es2020',
     cssMinify: true,
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-gsap': ['gsap'],
+        },
+      },
+    },
   },
 });

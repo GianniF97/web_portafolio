@@ -1,111 +1,243 @@
-import React, { memo } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useDisplayMode } from '../context/DisplayModeContext';
+import { useCookieConsent } from '../context/CookieConsentContext';
 import { personalProfile } from '../data/portfolioData';
-import { GitHubIcon, LinkedInIcon, MailIcon, ArrowUpIcon } from './Icons';
+import { GFLogo } from './GFLogo';
+import {
+  ArrowUpIcon,
+  ArrowUpRightIcon,
+  GitHubIcon,
+  LinkedInIcon,
+  MailIcon,
+} from './Icons';
 
-export const Footer: React.FC = memo(() => {
+function getArgentinaClock(): string {
+  try {
+    return new Intl.DateTimeFormat('es-AR', {
+      timeZone: personalProfile.timeZone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(new Date());
+  } catch {
+    return '--:--';
+  }
+}
+
+export const Footer: React.FC = () => {
+  const { calmMode } = useDisplayMode();
+  const { currentPath, navigateTo, openConfig } = useCookieConsent();
   const currentYear = new Date().getFullYear();
+  const [localTime, setLocalTime] = useState<string>(() => getArgentinaClock());
+  const [copiedMail, setCopiedMail] = useState<boolean>(false);
+  const stripRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setLocalTime(getArgentinaClock());
+    }, 30000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(personalProfile.contact.email);
+      setCopiedMail(true);
+    } catch {
+      setCopiedMail(true);
+    }
+    window.setTimeout(() => setCopiedMail(false), 2200);
+  };
+
+  const handleStripPointer = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (calmMode || event.pointerType !== 'mouse') return;
+      const el = stripRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const nx = (event.clientX - rect.left) / Math.max(rect.width, 1);
+      el.style.setProperty('--ft-sheen-x', `${(nx * 100).toFixed(1)}%`);
+    },
+    [calmMode]
+  );
 
   return (
-    <footer className="brikken-footer" role="contentinfo">
-      <div className="brikken-container">
-        {/* Columnas superiores del pie */}
-        <div className="footer-top-columns">
-          <div className="footer-brand-bio">
-            <a href="#inicio" className="footer-brand-title" aria-label="Ir al inicio">
-              [GF] GIANNI FERRARI
-            </a>
-            <p className="footer-brand-sub">
-              {personalProfile.roleTag} · {personalProfile.about.education}.
-              <br />
-              {personalProfile.location} ({personalProfile.timeZoneLabel}).
-            </p>
-            <p className="footer-brand-sub" style={{ color: 'var(--text-muted)' }}>
-              Ingeniería de software con foco en consistencia de datos relacionales, arquitectura limpia y código mantenible.
-            </p>
-          </div>
+    <footer className="studio-ft" aria-label="Pie de página">
+      <div className="studio-footer-glow" aria-hidden="true" />
 
-          <div>
-            <h3 className="footer-column-title">Índice del Portafolio</h3>
-            <ul className="footer-links-list">
-              <li className="footer-link-item"><a href="#inicio">00. Inicio</a></li>
-              <li className="footer-link-item"><a href="#sobre-mi">01. Sobre mí</a></li>
-              <li className="footer-link-item"><a href="#proyectos">02. Proyectos</a></li>
-              <li className="footer-link-item"><a href="#capacidades">03. Capacidades</a></li>
-              <li className="footer-link-item"><a href="#tecnologias">04. Stack</a></li>
-              <li className="footer-link-item"><a href="#faq">05. Preguntas</a></li>
-              <li className="footer-link-item"><a href="#contacto">06. Contacto</a></li>
-            </ul>
-          </div>
+      <div className="studio-container">
+        <div className="studio-ft-head">
+          <div className="studio-ft-lead">
+            <GFLogo variant="footer" showSubtitle={true} size={46} />
 
-          <div>
-            <h3 className="footer-column-title">Canales &amp; Conexión</h3>
-            <ul className="footer-links-list">
-              {personalProfile.contact.githubUrl && (
-                <li className="footer-link-item">
-                  <a
-                    href={personalProfile.contact.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
-                  >
-                    <GitHubIcon size={14} />
-                    <span>GitHub (@GianniF97)</span>
-                  </a>
-                </li>
-              )}
-              {personalProfile.contact.linkedinUrl && (
-                <li className="footer-link-item">
-                  <a
-                    href={personalProfile.contact.linkedinUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
-                  >
-                    <LinkedInIcon size={14} />
-                    <span>LinkedIn</span>
-                  </a>
-                </li>
-              )}
-              <li className="footer-link-item">
-                <a
-                  href={`mailto:${personalProfile.contact.email}`}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+            <p className="studio-ft-say">
+              Software con <strong>estructura y movimiento.</strong>
+            </p>
+
+            <ul className="studio-ft-reach">
+              <li>
+                <span>{personalProfile.hero.label} · Disponible</span>
+              </li>
+              <li>
+                <span>
+                  {personalProfile.location} · <b>{localTime}</b> ({personalProfile.timeZoneLabel})
+                </span>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  className="studio-ft-mail"
+                  onClick={handleCopy}
+                  title="Copiar correo electrónico"
                 >
                   <MailIcon size={14} />
-                  <span>Correo directo</span>
-                </a>
+                  <span>{personalProfile.contact.email}</span>
+                  <span
+                    className="studio-ft-copied"
+                    data-on={copiedMail ? 'true' : undefined}
+                  >
+                    Copiado
+                  </span>
+                </button>
               </li>
             </ul>
+          </div>
 
-            <div style={{ marginTop: '1.5rem' }}>
-              <a href="#inicio" className="footer-back-top-btn" aria-label="Volver arriba">
-                <span>Volver arriba</span>
-                <ArrowUpIcon size={11} />
+          <div className="studio-ft-cols">
+            <nav className="studio-ft-nav" aria-label="Enlaces del sitio">
+              <span className="studio-footer-heading">Recorrido</span>
+              {(['#inicio', '#sobre-mi', '#tecnologias', '#proyectos', '#contacto'] as const).map(
+                (hash) => {
+                  const labels: Record<string, string> = {
+                    '#inicio': 'Inicio',
+                    '#sobre-mi': 'Sobre mí',
+                    '#tecnologias': 'Tecnologías',
+                    '#proyectos': 'Proyectos',
+                    '#contacto': 'Contacto',
+                  };
+                  return (
+                    <a
+                      key={hash}
+                      href={hash}
+                      onClick={(e) => {
+                        if (currentPath !== '/') {
+                          e.preventDefault();
+                          navigateTo('/', hash);
+                        }
+                      }}
+                    >
+                      {labels[hash]}
+                    </a>
+                  );
+                }
+              )}
+            </nav>
+
+            <div className="studio-ft-nav">
+              <span className="studio-footer-heading">Presencia</span>
+              <a
+                href={personalProfile.contact.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="studio-footer-ext-link"
+              >
+                <GitHubIcon size={14} />
+                <span>GitHub</span>
+                <ArrowUpRightIcon size={12} />
+              </a>
+              <a
+                href={personalProfile.contact.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="studio-footer-ext-link"
+              >
+                <LinkedInIcon size={14} />
+                <span>LinkedIn</span>
+                <ArrowUpRightIcon size={12} />
+              </a>
+              <a
+                href="https://biofuego.web.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="studio-footer-ext-link"
+              >
+                <span>Biofuego</span>
+                <ArrowUpRightIcon size={12} />
+              </a>
+              <a
+                href="https://radiogravity.web.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="studio-footer-ext-link"
+              >
+                <span>Radio Gravity</span>
+                <ArrowUpRightIcon size={12} />
               </a>
             </div>
+
+            <nav className="studio-ft-nav studio-footer-legal" aria-label="Documentación legal y privacidad">
+              <span className="studio-footer-heading">Legal</span>
+              <a
+                href="/privacidad"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/privacidad');
+                }}
+                aria-current={currentPath === '/privacidad' ? 'page' : undefined}
+              >
+                Política de Privacidad
+              </a>
+              <a
+                href="/cookies"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/cookies');
+                }}
+                aria-current={currentPath === '/cookies' ? 'page' : undefined}
+              >
+                Política de Cookies
+              </a>
+              <button
+                type="button"
+                className="studio-footer-cookie-btn"
+                onClick={openConfig}
+              >
+                Configurar cookies
+              </button>
+            </nav>
           </div>
         </div>
 
-        {/* Firma Tipográfica Monumental Brikken */}
-        <div className="footer-wordmark-container" aria-hidden="true">
-          <div className="footer-monumental-wordmark">
-            GIANNI FERRARI
-          </div>
+        {/* Franja cromada monumental GF interactiva */}
+        <div
+          ref={stripRef}
+          className="studio-footer-monogram-strip"
+          onPointerMove={handleStripPointer}
+          aria-hidden="true"
+        >
+          <span className="studio-footer-gf-big">GF · GIANNI FERRARI</span>
+          <span className="studio-footer-divider-line" />
         </div>
 
-        {/* Colofón inferior */}
-        <div className="footer-bottom-row">
-          <span>
-            © {currentYear} {personalProfile.name} ({personalProfile.githubHandle}).
-          </span>
-          <span>
-            ARQUITECTURA REACT 18 + TYPESCRIPT · CSS ARQUITECTÓNICO · {personalProfile.location.toUpperCase()} ({personalProfile.timeZoneLabel})
-          </span>
+        <div className="studio-ft-row">
+          <p className="studio-footer-copy">
+            © {currentYear} {personalProfile.name} · Desarrollador en formación · Hecho en Argentina
+          </p>
+          <a
+            href="#inicio"
+            className="studio-back-top"
+            onClick={(e) => {
+              if (currentPath !== '/') {
+                e.preventDefault();
+                navigateTo('/');
+              }
+            }}
+          >
+            <span>Volver arriba</span>
+            <ArrowUpIcon size={14} />
+          </a>
         </div>
       </div>
     </footer>
   );
-});
-Footer.displayName = 'Footer';
-
-export default Footer;
+};

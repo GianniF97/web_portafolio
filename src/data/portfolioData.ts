@@ -91,7 +91,6 @@ export interface TechItem {
 export interface TechCategory {
   id: TechCategoryId;
   title: string;
-  codeLabel: string;
   description: string;
 }
 
@@ -203,9 +202,9 @@ export const personalProfile: PersonalProfile = {
     quote:
       'Un esquema de datos coherente evita errores que, más adelante, parecen problemas de código.',
     introParagraph:
-      'Soy Gianni Alessandro Ferrari, estudiante avanzado de Analista de Sistemas. Me interesa entender cómo funciona un sistema de punta a punta: cómo se modelan los datos, cómo se organiza el backend y cómo llega todo eso a una interfaz que se pueda usar sin fricción.',
+      'Soy Gianni Alessandro Ferrari, estudiante avanzado de Analista de Sistemas. Trabajo en todo el ciclo de una aplicación: cómo se modelan los datos, cómo se organiza el backend y cómo llega todo eso a una interfaz clara y usable.',
     whoIAm:
-      'Trabajo principalmente con Python, Flask y bases de datos relacionales, complementado con desarrollo frontend moderno. Mis proyectos más destacados integran sistemas de gestión industrial (control de aserradero) y aplicaciones web en producción como la plataforma de streaming Radio Gravity y la web institucional de Biofuego desplegados en la nube.',
+      'Trabajo principalmente con Python, Flask y bases de datos relacionales, junto con desarrollo frontend en React y TypeScript. Mis proyectos abarcan desde sistemas de gestión industrial (control de aserradero) hasta aplicaciones web en producción como Radio Gravity y Biofuego.',
     whatILearn:
       'Hoy estoy profundizando en React y TypeScript —este sitio es parte de esa práctica—, en modelado relacional y en buenas prácticas de seguridad aplicadas al desarrollo web.',
     whatIBuild:
@@ -280,9 +279,9 @@ export const projectsData: ProjectItem[] = [
   {
     id: 'sistema-aserradero',
     title: 'Sistema de Gestión Integral de Aserradero',
-    subtitle: 'Control de inventario de rollos en playón, órdenes de corte y trazabilidad industrial',
+    subtitle: 'Control de inventario de rollos, órdenes de corte y trazabilidad',
     problem:
-      'La administración tradicional de rollos de madera y órdenes de corte en aserraderos genera inconsistencias en el stock, errores en el cálculo de cubicación geométrica y falta de trazabilidad en los remitos de despacho.',
+      'Aplicación web en Python y Flask (MVC) con base de datos relacional para controlar inventario de rollos, cubicación geométrica en m³ y remitos de despacho.',
     goal:
       'Desarrollar una aplicación web industrial en Python y Flask bajo arquitectura MVC, con base de datos relacional modelada formalmente mediante Diagrama Entidad-Relación (DER) y matriz de trazabilidad de requerimientos.',
     highlights: [
@@ -310,9 +309,9 @@ export const projectsData: ProjectItem[] = [
   {
     id: 'biofuego',
     title: 'Biofuego',
-    subtitle: 'Página web institucional y plataforma de pedidos para iniciadores de fuego artesanales',
+    subtitle: 'Sitio web institucional y calculadora de pedidos',
     problem:
-      'Las marcas artesanales y ecológicas requieren una presencia digital profesional y de alto impacto visual para comunicar el origen sustentable de sus productos (100% aserrín de madera), presentar sus formatos y facilitar solicitudes directas de compra sin fricción.',
+      'Sitio web institucional y catálogo de formatos con calculadora de pedidos en tiempo real e integración directa con WhatsApp y correo para contacto comercial.',
     goal:
       'Diseñar y desplegar una plataforma institucional moderna, fluida y responsiva para Biofuego, con animaciones de alto rendimiento (60-120 FPS), interactividad 3D en el hero, calculadora dinámica de pedidos y contacto directo vía WhatsApp y correo.',
     highlights: [
@@ -340,9 +339,9 @@ export const projectsData: ProjectItem[] = [
   {
     id: 'radiogravity',
     title: 'Radio Gravity',
-    subtitle: 'Página web de radio online y Progressive Web App (PWA) con transmisión oficial en vivo 24/7',
+    subtitle: 'Radio online y Progressive Web App (PWA) en vivo',
     problem:
-      'Las estaciones de radio digital habitualmente carecen de reproductores interactivos con respuesta visual en tiempo real, sufren de consumo excesivo de recursos y no ofrecen instalación fluida en dispositivos móviles.',
+      'Plataforma de radio online 24/7 con reproductor dual (MP3/AAC), analizador de frecuencias con Web Audio API, visualizador 3D en Three.js e instalación como PWA.',
     goal:
       'Construir una plataforma web interactiva y Progressive Web App (PWA) para Radio Gravity con transmisión de audio continua en vivo (MP3/AAC), motor de análisis Web Audio API en tiempo real, visualizador 3D reactivo mediante Three.js y WebGL, y soporte de instalación nativa.',
     highlights: [
@@ -370,9 +369,9 @@ export const projectsData: ProjectItem[] = [
   {
     id: 'programacion-cientifica-lab',
     title: 'Laboratorio de Programación Científica y Métodos Numéricos',
-    subtitle: 'Algoritmos matemáticos, álgebra computacional y simulación numérica en Python',
+    subtitle: 'Algoritmos matemáticos, álgebra computacional y simulación numérica',
     problem:
-      'La resolución computacional de problemas matemáticos complejos y ecuaciones no lineales exige algoritmos con convergencia verificada, control de errores de redondeo y optimización de complejidad temporal.',
+      'Implementación en Python de métodos numéricos (Newton-Raphson, LU, Simpson, Lagrange) con control de tolerancia de error (tol < 1e-7) y pruebas de convergencia.',
     goal:
       'Implementar, comprobar y documentar métodos numéricos (Newton-Raphson, matrices, integración por Simpson, interpolación) como parte de la formación avanzada en Ciencias de la Computación y Análisis de Sistemas.',
     highlights: [
@@ -400,9 +399,9 @@ export const projectsData: ProjectItem[] = [
   {
     id: 'sistema-gestion-cheques-core',
     title: 'Sistema de Gestión de Cheques (Core Backend en Python)',
-    subtitle: 'Arquitectura fundacional en Python con persistencia y lógica contable',
+    subtitle: 'Arquitectura modular en Python con persistencia y lógica contable',
     problem:
-      'La etapa inicial de administración de valores financieros requería validar las reglas de negocio, cálculo de plazos de acreditación y clasificación de estados antes de su migración a la arquitectura web 2.0.',
+      'Motor lógico en Python orientado a objetos para administrar cheques en cartera, plazos de vencimiento, conciliación bancaria y estados de cobro.',
     goal:
       'Diseñar e implementar el motor lógico y el modelo de datos en Python puro para la gestión de cheques en cartera, cálculo de intereses y estados de cobro.',
     highlights: [
@@ -429,13 +428,13 @@ export const projectsData: ProjectItem[] = [
   {
     id: 'practicas-git-github-pp',
     title: 'Práctica Profesional de Git, GitHub & Arquitectura',
-    subtitle: 'Flujos de trabajo colaborativos, branching y estándares de control de versiones',
+    subtitle: 'Flujos de trabajo colaborativos, branching y control de versiones',
     problem:
-      'En entornos profesionales de desarrollo de software, la falta de convenciones en ramas y commits provoca desorden, conflictos difíciles de resolver y pérdida de trazabilidad en el código.',
+      'Documentación y ejercicios prácticos de GitFlow, feature branches, resolución de conflictos, pull requests y mensajes de commit semánticos.',
     goal:
       'Estructurar y documentar flujos de trabajo estandarizados (GitFlow, feature branches, pull requests y semantic commit messages) en el marco de la Práctica Profesional de Sistemas.',
     highlights: [
-      'Prácticas de versionado colaborativo y resolución metódica de conflictos.',
+      'Prácticas de versionado colaborativo y resolución de conflictos en ramas.',
       'Estandarización de commits semánticos y documentación técnica de repositorios.',
       'Organización de proyectos y buenas prácticas de ingeniería de software.',
     ],
@@ -465,33 +464,28 @@ export const projectsData: ProjectItem[] = [
 export const techCategories: TechCategory[] = [
   {
     id: 'backend',
-    title: 'Backend & APIs',
-    codeLabel: '01 // BACKEND_CORE',
-    description: 'Desarrollo de servidores, arquitectura MVC, APIs REST y lógica de negocio orientada a sistemas.',
+    title: 'Backend & Datos',
+    description: 'Desarrollo de servidores en Flask, arquitectura MVC, APIs REST y lógica de negocio.',
   },
   {
     id: 'bases-de-datos',
     title: 'Bases de datos & Modelado',
-    codeLabel: '02 // DATA_STORAGE',
     description: 'Motores relacionales, diseño de diagramas Entidad-Relación (DER), normalización y consultas SQL.',
   },
   {
     id: 'lenguajes',
     title: 'Lenguajes de programación',
-    codeLabel: '03 // LANGUAGES',
     description: 'Lenguajes base con los que resuelvo problemas algorítmicos y estructuro aplicaciones de software.',
   },
   {
     id: 'frontend',
     title: 'Frontend & UI',
-    codeLabel: '04 // FRONTEND_UI',
     description: 'Construcción de interfaces web semánticas, responsivas, interactivas y accesibles.',
   },
   {
     id: 'herramientas',
-    title: 'Herramientas, Cloud & Seguridad',
-    codeLabel: '05 // TOOLING_SECURITY',
-    description: 'Control de versiones, despliegue en la nube, hardening de sistemas y entornos de desarrollo.',
+    title: 'Herramientas & Despliegue',
+    description: 'Control de versiones, despliegue en la nube, seguridad de aplicaciones y entornos de desarrollo.',
   },
 ];
 
@@ -586,7 +580,7 @@ export const technologiesData: TechItem[] = [
     name: 'TypeScript',
     category: 'lenguajes',
     stage: 'En aprendizaje',
-    context: 'Tipado estático riguroso, definición de contratos de datos para componentes y prevención de errores en compilación.',
+    context: 'Tipado estático estricto, definición de contratos de datos para componentes y prevención de errores en compilación.',
     iconKey: 'typescript',
   },
 
@@ -679,7 +673,7 @@ export const learningLogData: LearningLogEntry[] = [
     category: 'Experimento técnico',
     title: 'Análisis de convergencia y control de error en métodos numéricos en Python',
     summary:
-      'Al implementar algoritmos de aproximación en Python (como Newton-Raphson y resolución de matrices), el desafío central fue establecer un criterio riguroso de tolerancia residual (tol < 1e-7) y controlar los puntos críticos con derivadas nulas.',
+      'Al implementar algoritmos de aproximación en Python (como Newton-Raphson y resolución de matrices), el desafío central fue definir un criterio preciso de tolerancia residual (tol < 1e-7) y controlar los puntos críticos con derivadas nulas.',
     takeaway:
       'En computación científica, verificar la convergencia matemática y manejar divisiones por cero previene bucles infinitos y asegura estabilidad numérica.',
     tags: ['Python 3', 'Métodos Numéricos', 'Algoritmos', 'Convergencia'],

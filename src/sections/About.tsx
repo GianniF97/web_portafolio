@@ -1,143 +1,125 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useState } from 'react';
 import { personalProfile } from '../data/portfolioData';
+import { GFLogo } from '../components/GFLogo';
 
-/**
- * Sección "About Us" 
- * - Titular lateral izquierdo en monospace tracking-widest: "ABOUT ME".
- * - Párrafo principal a gran escala (text-[28px] md:text-[44px] lg:text-[60px]) con
- *   animación de revelación de color palabra por palabra al hacer scroll.
- * - Dos columnas de ítems con viñetas de puntos cuadrados en color de acento.
- */
-export const About: React.FC = memo(() => {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
+const ABOUT_TITLE_WORDS = ['De', 'la', 'estructura', 'de', 'datos', 'a', 'la'];
 
-  const manifestoText =
-    'Estudiante avanzado de Analista de Sistemas en Argentina. Diseño y construyo software de punta a punta: desde el modelado conceptual relacional hasta una interfaz limpia, tipada y accesible. Creo en sistemas que resuelven problemas reales con datos rigurosos y sin fricción operativa.';
+export const About: React.FC = () => {
+  const [openIndices, setOpenIndices] = useState<number[]>([0]);
 
-  const words = manifestoText.split(' ');
-
-  useEffect(() => {
-    let rafId: number | null = null;
-
-    const onScroll = () => {
-      if (rafId !== null) return;
-      rafId = requestAnimationFrame(() => {
-        if (!sectionRef.current) {
-          rafId = null;
-          return;
-        }
-        const rect = sectionRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        // Progreso relativo a la entrada y salida de la sección
-        const start = windowHeight * 0.85;
-        const end = windowHeight * 0.15;
-        const total = start - end + rect.height;
-        const current = start - rect.top;
-        const progress = Math.min(1, Math.max(0, current / total));
-        setScrollProgress(progress);
-        rafId = null;
-      });
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (rafId !== null) cancelAnimationFrame(rafId);
-    };
-  }, []);
+  const togglePrinciple = (idx: number) => {
+    setOpenIndices((prev) =>
+      prev.includes(idx) ? prev.filter((item) => item !== idx) : [...prev, idx]
+    );
+  };
 
   return (
     <section
       id="sobre-mi"
-      ref={sectionRef}
-      className="brikken-about-scrub-section"
-      aria-labelledby="about-scrub-heading"
+      className="studio-section studio-about-section studio-fq"
+      aria-labelledby="about-heading"
     >
-      <div className="brikken-container">
-        <div className="about-scrub-layout">
-          {/* Columna Lateral Izquierda */}
-          <div className="about-scrub-sidebar">
-            <span id="about-scrub-heading" className="about-kicker-tag">
-              SOBRE MÍ // ENFOQUE
-            </span>
-          </div>
-
-          {/* Columna Principal Derecha */}
-          <div className="about-scrub-main">
-            {/* Párrafo con iluminación progresiva de cada palabra por scroll */}
-            <p className="about-manifesto-paragraph" aria-label={manifestoText}>
-              {words.map((word, idx) => {
-                const wordActivationThreshold = idx / (words.length * 0.9);
-                const isActivated = scrollProgress >= wordActivationThreshold;
-                return (
-                  <span
-                    key={idx}
-                    className={`scrub-word ${isActivated ? 'is-active' : ''}`}
-                    style={{
-                      color: isActivated
-                        ? 'var(--text-primary)'
-                        : 'var(--text-faint)',
-                      transition: 'color 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
-                    }}
-                  >
-                    {word}{' '}
-                  </span>
-                );
-              })}
-            </p>
-
-            {/* Dos Columnas de Pilares con Puntos Cuadrados Brikken */}
-            <div className="about-bullets-dual-cols">
-              <ul className="about-bullets-list">
-                <li className="about-bullet-item">
-                  <span className="bullet-square-icon" aria-hidden="true" />
-                  <span className="bullet-item-text">
-                    <strong>Modelado Relacional:</strong> Esquemas DER formalizados antes de codificar.
-                  </span>
-                </li>
-                <li className="about-bullet-item">
-                  <span className="bullet-square-icon" aria-hidden="true" />
-                  <span className="bullet-item-text">
-                    <strong>Backend en Flask:</strong> Arquitectura MVC limpia y cálculo volumétrico exacto.
-                  </span>
-                </li>
-              </ul>
-
-              <ul className="about-bullets-list">
-                <li className="about-bullet-item">
-                  <span className="bullet-square-icon" aria-hidden="true" />
-                  <span className="bullet-item-text">
-                    <strong>Frontend Tipado:</strong> Interfaces modernas con React y TypeScript.
-                  </span>
-                </li>
-                <li className="about-bullet-item">
-                  <span className="bullet-square-icon" aria-hidden="true" />
-                  <span className="bullet-item-text">
-                    <strong>Seguridad &amp; Calidad:</strong> Sanitización de entradas y código mantenible.
-                  </span>
-                </li>
-              </ul>
+      <div className="studio-container">
+        <div className="studio-fq-in">
+          {/* Columna izquierda Sticky */}
+          <header className="studio-fq-head">
+            <div className="studio-section-kicker-wrap">
+              <span className="studio-kicker-label">Sobre mí · Perfil Técnico</span>
             </div>
 
-            {/* Cita de Ingeniería */}
-            <div className="about-quote-stamp-strip">
-              <p className="quote-stamp-text">
-                “{personalProfile.about.quote}”
-              </p>
-              <span className="quote-stamp-author">
-                — {personalProfile.name} · {personalProfile.about.education}
+            <h2 id="about-heading" className="studio-fq-title">
+              {ABOUT_TITLE_WORDS.map((word, wIdx) => (
+                <span
+                  key={`${word}-${wIdx}`}
+                  className="studio-word-mask"
+                  style={{ '--w': wIdx } as React.CSSProperties}
+                >
+                  <span>{word} </span>
+                </span>
+              ))}
+              <span className="studio-word-mask" style={{ '--w': 7 } as React.CSSProperties}>
+                <span className="studio-fq-fx">experiencia funcional.</span>
               </span>
+            </h2>
+
+            <div className="studio-about-role-bar">
+              <span className="studio-badge-chrome">{personalProfile.hero.label}</span>
+              <span className="studio-role-subtext">{personalProfile.about.education}</span>
+            </div>
+
+            <blockquote className="studio-quote-monolith">
+              <div className="studio-quote-wm" aria-hidden="true">
+                <GFLogo variant="watermark" />
+              </div>
+              <p className="studio-quote-text">“{personalProfile.about.quote}”</p>
+              <footer className="studio-quote-caption">
+                <span>{personalProfile.name}</span>
+                <span aria-hidden="true">·</span>
+                <span>{personalProfile.roleTag}</span>
+              </footer>
+            </blockquote>
+
+            <div className="studio-focus-areas">
+              <h3 className="studio-mini-heading">Foco de formación actual</h3>
+              <ul className="studio-focus-list">
+                {personalProfile.focusAreas.map((area) => (
+                  <li key={area} className="studio-focus-pill">
+                    <span className="studio-focus-marker" aria-hidden="true" />
+                    <span>{area}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </header>
+
+          {/* Columna derecha: Narrativa + Lista interactiva de principios estilo .fq-list */}
+          <div className="studio-about-right">
+            <div className="studio-about-prose">
+              <p>{personalProfile.about.introParagraph}</p>
+              <p>{personalProfile.about.whoIAm}</p>
+              <p>{personalProfile.about.whatILearn}</p>
+              <p>{personalProfile.about.howISolveProblems}</p>
+              <p>{personalProfile.about.whatIImprove}</p>
+            </div>
+
+            <div className="studio-principles-section">
+              <h3 className="studio-mini-heading">Criterios de construcción (explorar)</h3>
+              <ul className="studio-fq-list">
+                {personalProfile.about.workingPrinciples.map((principle, idx) => {
+                  const isOpen = openIndices.includes(idx);
+                  const panelId = `principle-panel-${idx}`;
+                  return (
+                    <li
+                      key={principle.title}
+                      className="studio-fq-item"
+                      data-open={isOpen ? 'true' : undefined}
+                      style={{ '--d': `${idx * 0.08}s` } as React.CSSProperties}
+                    >
+                      <h4 className="studio-fq-q">
+                        <button
+                          type="button"
+                          aria-expanded={isOpen}
+                          aria-controls={panelId}
+                          onClick={() => togglePrinciple(idx)}
+                        >
+                          <span className="studio-fq-q-text">{principle.title}</span>
+                          <span className="studio-fq-plus" aria-hidden="true" />
+                        </button>
+                      </h4>
+
+                      <div id={panelId} className="studio-fq-a">
+                        <div>
+                          <p>{principle.description}</p>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </div>
         </div>
       </div>
     </section>
   );
-});
-
-About.displayName = 'About';
-
-export default About;
+};

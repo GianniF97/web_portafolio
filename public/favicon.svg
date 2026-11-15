@@ -1,7 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Icono de portafolio">
-  <rect width="64" height="64" rx="14" fill="#090B0E"/>
-  <rect x="2" y="2" width="60" height="60" rx="12" fill="none" stroke="#1E293B" stroke-width="2"/>
-  <path d="M18 22L28 32L18 42" fill="none" stroke="#34D399" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="33" y1="42" x2="46" y2="42" stroke="#F2F4F8" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="48" cy="18" r="3.5" fill="#F59E0B"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="GF">
+  <rect width="32" height="32" rx="7" fill="#0A0A0B" />
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
+  <!-- G geométrica peso 700 centrada ópticamente -->
+  <path
+    fill="#FFFFFF"
+    d="M11.6 9.5C8.35 9.5 6 11.98 6 16C6 20.02 8.35 22.5 11.65 22.5C14.42 22.5 16.4 20.82 16.4 17.85V15.4H11.55V17.65H13.85V18.02C13.85 19.38 12.96 20.18 11.65 20.18C9.78 20.18 8.65 18.64 8.65 16C8.65 13.36 9.78 11.82 11.6 11.82C12.82 11.82 13.64 12.46 13.92 13.52H16.45C16.08 11.04 14.26 9.5 11.6 9.5Z"
+  />
+  <!-- F geométrica peso 700 centrada ópticamente -->
+  <path
+    fill="#FFFFFF"
+    d="M18.35 9.75V22.25H20.95V17.1H25.35V14.8H20.95V12.05H25.85V9.75H18.35Z"
+  />
 </svg>

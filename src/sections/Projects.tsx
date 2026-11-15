@@ -1,314 +1,195 @@
-import React, { useState, useMemo, memo } from 'react';
-import { projectsData, type ProjectStatus, type ProjectItem } from '../data/portfolioData';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useDisplayMode } from '../context/DisplayModeContext';
+import { projectsData, type ProjectStatus } from '../data/portfolioData';
 import { ArrowUpRightIcon, GitHubIcon } from '../components/Icons';
+import { ProjectLogo } from '../components/ProjectLogo';
+import { ProjectWindowMockup } from '../components/ProjectWindowMockup';
 
-type FilterOption = 'Todos' | ProjectStatus;
+type StatusFilter = 'Todos' | ProjectStatus;
 
-/**
- * Sección de Proyectos ("Our Work"):
- * - Titular gigante a escala monumental.
- * - Grilla asimétrica escalonada de 2 columnas donde la segunda tarjeta está desplazada hacia abajo (md:mt-24).
- * - Tercera tarjeta a todo el ancho inferior.
- * - Tarjetas técnicas compactas al pie para proyectos de laboratorio e investigación.
- */
-export const Projects: React.FC = memo(() => {
-  const [selectedStatus, setSelectedStatus] = useState<FilterOption>('Todos');
+const PROJ_HEAD_WORDS = ['Sistemas', 'y', 'experiencias'];
 
-  const filterOptions: Array<{ label: FilterOption; count: number }> = useMemo(() => {
-    const doneCount = projectsData.filter((p) => p.status === 'Terminado').length;
-    const devCount = projectsData.filter((p) => p.status === 'En desarrollo').length;
-    return [
-      { label: 'Todos', count: projectsData.length },
-      { label: 'Terminado', count: doneCount },
-      { label: 'En desarrollo', count: devCount },
-    ];
+export const Projects: React.FC = () => {
+  const { calmMode } = useDisplayMode();
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('Todos');
+
+  const counts = useMemo<Record<StatusFilter, number>>(() => {
+    const done = projectsData.filter((p) => p.status === 'Terminado').length;
+    const wip = projectsData.filter((p) => p.status === 'En desarrollo').length;
+    const experimental = projectsData.filter((p) => p.status === 'Experimental').length;
+    return {
+      Todos: projectsData.length,
+      Terminado: done,
+      'En desarrollo': wip,
+      Experimental: experimental,
+    };
   }, []);
 
-  const filteredProjects = useMemo(() => {
-    return projectsData.filter((project) => {
-      if (selectedStatus === 'Todos') return true;
-      return project.status === selectedStatus;
-    });
-  }, [selectedStatus]);
+  const visibleProjects = useMemo(() => {
+    if (statusFilter === 'Todos') return projectsData;
+    return projectsData.filter((project) => project.status === statusFilter);
+  }, [statusFilter]);
 
-  const isTopThree = (p: ProjectItem) =>
-    p.id === 'sistema-aserradero' || p.id === 'biofuego' || p.id === 'radiogravity';
+  const handleWindowPointerMove = useCallback(
+    (event: React.PointerEvent<HTMLElement>) => {
+      if (calmMode || event.pointerType !== 'mouse') return;
+      const el = event.currentTarget;
+      const rect = el.getBoundingClientRect();
+      const nx = (event.clientX - rect.left) / Math.max(rect.width, 1) - 0.5;
+      const ny = (event.clientY - rect.top) / Math.max(rect.height, 1) - 0.5;
+      el.style.setProperty('--tilt-x', `${(-ny * 5).toFixed(2)}deg`);
+      el.style.setProperty('--tilt-y', `${(nx * 6).toFixed(2)}deg`);
+      el.style.setProperty('--spotlight-x', `${((nx + 0.5) * 100).toFixed(1)}%`);
+      el.style.setProperty('--spotlight-y', `${((ny + 0.5) * 100).toFixed(1)}%`);
+    },
+    [calmMode]
+  );
 
-  const flagship = filteredProjects.find((p) => p.id === 'sistema-aserradero');
-  const biofuego = filteredProjects.find((p) => p.id === 'biofuego');
-  const radiogravity = filteredProjects.find((p) => p.id === 'radiogravity');
-  const archiveProjects = filteredProjects.filter((p) => !isTopThree(p));
-  const hasTopThree = Boolean(flagship || biofuego || radiogravity);
+  const handleWindowPointerLeave = useCallback((event: React.PointerEvent<HTMLElement>) => {
+    const el = event.currentTarget;
+    el.style.setProperty('--tilt-x', '0deg');
+    el.style.setProperty('--tilt-y', '0deg');
+  }, []);
 
   return (
-    <section id="proyectos" className="brikken-work-section reveal-section" aria-labelledby="work-title">
-      <div className="brikken-container">
-        {/* Cabecera Brikken con Titular Monumental */}
-        <div className="brikken-work-header">
-          <div className="section-eyebrow-row">
-            <span aria-hidden="true">[</span>
-            <span>02 // PROYECTOS SELECCIONADOS</span>
-            <span aria-hidden="true">]</span>
+    <section
+      id="proyectos"
+      className="studio-section studio-projects-section"
+      aria-labelledby="projects-heading"
+    >
+      <div className="studio-container">
+        <header className="studio-section-header studio-projects-header">
+          <div className="studio-section-kicker-wrap">
+            <span className="studio-kicker-label">Proyectos Seleccionados · Archivo Técnico</span>
           </div>
 
-          <h2 id="work-title" className="brikken-monumental-work-title">
-            Proyectos
-          </h2>
+          <div className="studio-projects-title-row">
+            <div>
+              <h2 id="projects-heading" className="studio-sv-title">
+                {PROJ_HEAD_WORDS.map((word, idx) => (
+                  <span
+                    key={`${word}-${idx}`}
+                    className="studio-sv-word"
+                    style={{ '--w': idx } as React.CSSProperties}
+                  >
+                    <span>{word} </span>
+                  </span>
+                ))}
+                <span className="studio-sv-word" style={{ '--w': 3 } as React.CSSProperties}>
+                  <span className="studio-sv-wow">en producción.</span>
+                </span>
+              </h2>
+              <p className="studio-section-lead">
+                Cada pieza combina modelado estructural, lógica verificable e interfaz clara.
+                Alterna entre vista, flujo arquitectónico, ficha técnica y adaptación móvil dentro de
+                cada ventana.
+              </p>
+            </div>
 
-          {/* Filtros con Contadores */}
-          <div className="brikken-filter-bar" role="group" aria-label="Filtrar proyectos por estado">
-            {filterOptions.map((opt) => {
-              const isSelected = selectedStatus === opt.label;
-              return (
-                <button
-                  key={opt.label}
-                  type="button"
-                  className={`filter-pill-btn ${isSelected ? 'is-active' : ''}`}
-                  onClick={() => setSelectedStatus(opt.label)}
-                  aria-pressed={isSelected}
-                >
-                  <span>{opt.label}</span>
-                  <span className="filter-badge-num tabular-nums">({opt.count})</span>
-                </button>
-              );
-            })}
+            <div className="studio-filter-group" role="group" aria-label="Filtrar por estado">
+              {(['Todos', 'Terminado', 'En desarrollo'] as StatusFilter[]).map((status) => {
+                const isSelected = statusFilter === status;
+                const count = counts[status] ?? 0;
+                return (
+                  <button
+                    key={status}
+                    type="button"
+                    className={`studio-filter-btn ${isSelected ? 'is-active' : ''}`}
+                    aria-pressed={isSelected}
+                    onClick={() => setStatusFilter(status)}
+                  >
+                    <span>{status}</span>
+                    <span className="studio-filter-count">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </header>
+      </div>
 
-        {/* Grilla Asimétrica Escalonada Brikken */}
-        <div className="brikken-staggered-work-grid">
-          {/* ARTÍCULO 1 (Columna Izquierda): SISTEMA DE ASERRADERO */}
-          {flagship && (
-            <article className="brikken-work-article article-left reveal-card" aria-label={`Proyecto: ${flagship.title}`}>
-              <div className="work-card-media-box">
-                <img
-                  src={flagship.image.src}
-                  alt={flagship.image.alt}
-                  width={flagship.image.width}
-                  height={flagship.image.height}
-                  loading="lazy"
-                  decoding="async"
-                  className="work-media-img"
-                />
-                <span className="work-media-badge">FLASK (MVC) · MODELADO DER · CUBICACIÓN M³</span>
-              </div>
+      {/* Bandas asimétricas protagonistas .studio-pj / .studio-pj-flip */}
+      <div className="studio-pj-stream">
+        {visibleProjects.map((project, index) => {
+          const isFlip = index % 2 === 1;
+          return (
+            <article
+              key={project.id}
+              id={`project-${project.id}`}
+              className={`studio-pj ${isFlip ? 'studio-pj-flip' : ''}`}
+              data-seen="true"
+              onPointerMove={handleWindowPointerMove}
+              onPointerLeave={handleWindowPointerLeave}
+            >
+              <div className="studio-pj-inner">
+                <div className="studio-pj-text" data-at="0.06">
+                  <div className="studio-pj-badges-row">
+                    <span className="studio-pj-app">
+                      <span className="studio-pj-icon">
+                        <ProjectLogo projectId={project.id} size={22} />
+                      </span>
+                      <span>{project.title}</span>
+                    </span>
 
-              <div className="work-card-details">
-                <div className="work-card-meta-line">
-                  <span className="work-cat-tag">{flagship.category}</span>
-                  <span className="work-status-tag">{flagship.status}</span>
-                </div>
-
-                <h3 className="work-item-headline">{flagship.title}</h3>
-                <p className="work-item-lead">{flagship.subtitle}</p>
-                <p className="work-item-desc">{flagship.problem}</p>
-
-                <div className="work-item-chips">
-                  {flagship.technologies.map((t) => (
-                    <span key={t} className="brikken-tech-chip">{t}</span>
-                  ))}
-                </div>
-
-                <div className="work-item-actions">
-                  {flagship.repoUrl && (
-                    <a
-                      href={flagship.repoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brikken-pill-btn-primary"
+                    <span
+                      className={`studio-project-status ${
+                        project.status === 'Terminado' ? 'is-done' : 'is-wip'
+                      }`}
                     >
-                      <GitHubIcon size={14} />
-                      <span>Ver Repositorio</span>
-                      <ArrowUpRightIcon size={12} />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </article>
-          )}
-
-          {/* ARTÍCULO 2 (Columna Derecha Desplazada hacia abajo - md:mt-24): BIOFUEGO */}
-          {biofuego && (
-            <article className="brikken-work-article article-right-offset reveal-card" aria-label={`Proyecto: ${biofuego.title}`}>
-              <div className="work-card-media-box">
-                <img
-                  src={biofuego.image.src}
-                  alt={biofuego.image.alt}
-                  width={biofuego.image.width}
-                  height={biofuego.image.height}
-                  loading="lazy"
-                  decoding="async"
-                  className="work-media-img"
-                />
-                <span className="work-media-badge">PRODUCCIÓN · FIREBASE · WEB INSTITUCIONAL</span>
-              </div>
-
-              <div className="work-card-details">
-                <div className="work-card-meta-line">
-                  <span className="work-cat-tag">{biofuego.category}</span>
-                  <span className="work-status-tag">{biofuego.status}</span>
-                </div>
-
-                <h3 className="work-item-headline">{biofuego.title}</h3>
-                <p className="work-item-lead">{biofuego.subtitle}</p>
-                <p className="work-item-desc">{biofuego.problem}</p>
-
-                <div className="work-item-chips">
-                  {biofuego.technologies.map((t) => (
-                    <span key={t} className="brikken-tech-chip">{t}</span>
-                  ))}
-                </div>
-
-                <div className="work-item-actions">
-                  {biofuego.demoUrl && (
-                    <a
-                      href={biofuego.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brikken-pill-btn-primary"
-                    >
-                      <span>Visitar Sitio Web</span>
-                      <ArrowUpRightIcon size={12} />
-                    </a>
-                  )}
-                  {biofuego.repoUrl && (
-                    <a
-                      href={biofuego.repoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="brikken-pill-btn-secondary"
-                    >
-                      <GitHubIcon size={14} />
-                      <span>Ver Repositorio</span>
-                      <ArrowUpRightIcon size={12} />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </article>
-          )}
-
-          {/* ARTÍCULO 3 (Ancho Completo Inferior): RADIO GRAVITY */}
-          {radiogravity && (
-            <article className="brikken-work-article article-full-width reveal-card" aria-label={`Proyecto: ${radiogravity.title}`}>
-              <div className="work-full-grid">
-                <div className="work-card-media-box">
-                  <img
-                    src={radiogravity.image.src}
-                    alt={radiogravity.image.alt}
-                    width={radiogravity.image.width}
-                    height={radiogravity.image.height}
-                    loading="lazy"
-                    decoding="async"
-                    className="work-media-img"
-                  />
-                  <span className="work-media-badge">STREAMING EN VIVO · PWA · THREE.JS &amp; WEBGL</span>
-                </div>
-
-                <div className="work-card-details">
-                  <div className="work-card-meta-line">
-                    <span className="work-cat-tag">{radiogravity.category}</span>
-                    <span className="work-status-tag">{radiogravity.status}</span>
+                      <span>{project.status}</span>
+                    </span>
                   </div>
 
-                  <h3 className="work-item-headline">{radiogravity.title}</h3>
-                  <p className="work-item-lead">{radiogravity.subtitle}</p>
-                  <p className="work-item-desc">{radiogravity.problem}</p>
+                  <p className="studio-pj-subtitle">{project.subtitle}</p>
+                  <p className="studio-pj-line">{project.problem}</p>
+                  <p className="studio-pj-kind">{project.category}</p>
 
-                  <div className="work-item-chips">
-                    {radiogravity.technologies.map((t) => (
-                      <span key={t} className="brikken-tech-chip">{t}</span>
+                  <div className="studio-project-stack-wrap" aria-label="Tecnologías usadas">
+                    {project.technologies.map((tech) => (
+                      <span key={tech} className="studio-stack-chip">
+                        {tech}
+                      </span>
                     ))}
                   </div>
 
-                  <div className="work-item-actions">
-                    {radiogravity.demoUrl && (
+                  <div className="studio-project-actions">
+                    {project.demoUrl && (
                       <a
-                        href={radiogravity.demoUrl}
+                        href={project.demoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="brikken-pill-btn-primary"
+                        className="studio-pj-visit"
                       >
-                        <span>Escuchar Radio en Vivo</span>
-                        <ArrowUpRightIcon size={12} />
+                        <span>Visitar sitio</span>
+                        <ArrowUpRightIcon size={15} className="studio-rg-arrow" />
                       </a>
                     )}
-                    {radiogravity.repoUrl && (
+
+                    {project.repoUrl && (
                       <a
-                        href={radiogravity.repoUrl}
+                        href={project.repoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="brikken-pill-btn-secondary"
+                        className={
+                          project.demoUrl ? 'studio-btn-glass' : 'studio-pj-visit studio-pj-repo'
+                        }
                       >
-                        <GitHubIcon size={14} />
-                        <span>Repositorio</span>
-                        <ArrowUpRightIcon size={12} />
+                        <GitHubIcon size={15} />
+                        <span>Código en GitHub</span>
+                        <ArrowUpRightIcon size={14} className="studio-rg-arrow" />
                       </a>
                     )}
                   </div>
+                </div>
+
+                <div className="studio-pj-window-stage">
+                  <ProjectWindowMockup project={project} />
                 </div>
               </div>
             </article>
-          )}
-
-          {/* FILA DE PROYECTOS TÉCNICOS ADICIONALES */}
-          {archiveProjects.length > 0 && (
-            <div className={`brikken-archive-ledger-row ${!hasTopThree ? 'is-standalone-grid' : ''}`}>
-              {archiveProjects.map((p) => (
-                <div key={p.id} className="archive-ledger-card reveal-card">
-                  <div className="work-card-meta-line">
-                    <span className="work-cat-tag">{p.category}</span>
-                    <span className="work-status-tag">{p.status}</span>
-                  </div>
-                  <h4 className="archive-card-title">{p.title}</h4>
-                  <p className="archive-card-desc">{p.problem || p.goal}</p>
-                  <div className="work-item-chips">
-                    {p.technologies.map((t) => (
-                      <span key={t} className="brikken-tech-chip">{t}</span>
-                    ))}
-                  </div>
-                  <div className="archive-card-actions">
-                    {p.demoUrl && (
-                      <a
-                        href={p.demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="archive-link"
-                      >
-                        <span>Visitar demo</span>
-                        <ArrowUpRightIcon size={11} />
-                      </a>
-                    )}
-                    {p.repoUrl && (
-                      <a
-                        href={p.repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="archive-link"
-                      >
-                        <GitHubIcon size={13} />
-                        <span>Ver código en GitHub</span>
-                        <ArrowUpRightIcon size={11} />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* ESTADO VACÍO CUANDO NO HAY COINCIDENCIAS */}
-          {filteredProjects.length === 0 && (
-            <div className="brikken-empty-projects-state">
-              <p>No se encontraron proyectos en este estado.</p>
-            </div>
-          )}
-        </div>
+          );
+        })}
       </div>
     </section>
   );
-});
-
-Projects.displayName = 'Projects';
-
-export default Projects;
+};
