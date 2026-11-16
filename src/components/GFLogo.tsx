@@ -1,4 +1,5 @@
 import React, { memo, useId } from 'react';
+import { Monogram3D } from './Monogram3D';
 
 interface GFLogoProps {
   className?: string;
@@ -10,7 +11,7 @@ interface GFLogoProps {
 /**
  * Identidad visual tecnológica GF:
  * - navbar / hero / footer / watermark: monograma octogonal biselado en cromo e iridiscencia.
- * - monolith: emblema GF único en cromo esculpido.
+ * - monolith: emblema GF esculpido en 3D real con WebGL / Three.js.
  */
 export const GFLogo: React.FC<GFLogoProps> = memo(
   ({ className = '', size = 38, showSubtitle = true, variant = 'navbar' }) => {
@@ -18,90 +19,9 @@ export const GFLogo: React.FC<GFLogoProps> = memo(
     const chromeGradId = `gf-chrome-${uid}`;
     const iridescentGradId = `gf-irid-${uid}`;
     const frameGradId = `gf-frame-${uid}`;
-    const mirrorGradA = `gf-mirror-a-${uid}`;
-    const mirrorGradB = `gf-mirror-b-${uid}`;
-    const bevelTopGrad = `gf-bevel-top-${uid}`;
 
     if (variant === 'monolith') {
-      return (
-        <div
-          className={`studio-gf-monolith ${className}`}
-          aria-label="Monograma GF"
-        >
-          {/* Emblema único GF en cromo limpio */}
-          <svg
-            viewBox="0 0 340 128"
-            className="studio-gf-chrome-base"
-            role="img"
-            aria-hidden="true"
-          >
-            <defs>
-              <linearGradient id={bevelTopGrad} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#64748B" />
-                <stop offset="28%" stopColor="#F8FAFC" />
-                <stop offset="50%" stopColor="#475569" />
-                <stop offset="78%" stopColor="#E2E8F0" />
-                <stop offset="100%" stopColor="#64748B" />
-              </linearGradient>
-
-              <linearGradient id={mirrorGradA} x1="12%" y1="0%" x2="88%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="18%" stopColor="#94A3B8" />
-                <stop offset="34%" stopColor="#0F172A" />
-                <stop offset="48%" stopColor="#E0F2FE" />
-                <stop offset="64%" stopColor="#1E293B" />
-                <stop offset="82%" stopColor="#FFFFFF" />
-                <stop offset="100%" stopColor="#64748B" />
-              </linearGradient>
-
-              <linearGradient id={mirrorGradB} x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#0F172A" />
-                <stop offset="28%" stopColor="#E2E8F0" />
-                <stop offset="48%" stopColor="#67E8F9" />
-                <stop offset="68%" stopColor="#1E293B" />
-                <stop offset="86%" stopColor="#F8FAFC" />
-                <stop offset="100%" stopColor="#94A3B8" />
-              </linearGradient>
-            </defs>
-
-            {/* Plano superior biselado en perspectiva */}
-            <path
-              d="M44 10H156L146 28H26L44 10ZM184 10H304L322 28H174L184 10Z"
-              fill={`url(#${bevelTopGrad})`}
-            />
-
-            {/* G extruida cromo espejo */}
-            <path
-              d="M26 28H146L154 52H68V94H120V78H92V58H164L154 118H16L26 28Z"
-              fill={`url(#${mirrorGradA})`}
-              stroke="rgba(255,255,255,0.42)"
-              strokeWidth="1.2"
-              strokeLinejoin="round"
-            />
-            {/* Reflejo líquido interno G */}
-            <path
-              d="M36 38C56 46 84 36 122 40C94 49 62 50 42 78C36 86 30 98 25 106L36 38Z"
-              fill="#FFFFFF"
-              fillOpacity="0.65"
-            />
-
-            {/* F extruida cromo espejo con matiz iridiscente */}
-            <path
-              d="M174 28H322L312 52H214V68H288L282 90H214V118H166L174 28Z"
-              fill={`url(#${mirrorGradB})`}
-              stroke="rgba(255,255,255,0.42)"
-              strokeWidth="1.2"
-              strokeLinejoin="round"
-            />
-            {/* Brillo especular sobre F */}
-            <path
-              d="M188 36H306L294 46C252 44 222 50 194 64L188 36Z"
-              fill="#FFFFFF"
-              fillOpacity="0.72"
-            />
-          </svg>
-        </div>
-      );
+      return <Monogram3D className={className} />;
     }
 
     const svgContent = (
