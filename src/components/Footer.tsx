@@ -63,8 +63,6 @@ export const Footer: React.FC = () => {
 
   return (
     <footer className="studio-ft" aria-label="Pie de página">
-      <div className="studio-footer-glow" aria-hidden="true" />
-
       <div className="studio-container">
         <div className="studio-ft-head">
           <div className="studio-ft-lead">

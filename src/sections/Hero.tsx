@@ -109,15 +109,15 @@ export const Hero: React.FC = () => {
         </div>
 
         <div className="studio-hero-centerpiece">
-          <div className="studio-status-pill studio-hero-badge">
+          <p className="studio-hero-eyebrow">
             <span>{personalProfile.hero.label}</span>
             <span className="studio-hero-sep" aria-hidden="true">
               ·
             </span>
             <span>{personalProfile.about.education}</span>
-          </div>
+          </p>
 
-          {/* Monograma escultórico triple GF (estilo .mark de wowww.art) */}
+          {/* Monograma escultórico 3D GF */}
           <div className="studio-mark-stage">
             <GFLogo variant="monolith" />
           </div>

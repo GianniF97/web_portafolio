@@ -16,13 +16,6 @@ const TOPIC_OPTIONS = [
   'Colaboración',
 ] as const;
 
-const FLOATING_CURSORS = [
-  { label: 'Backend & APIs', color: '#38bdf8', ink: '#04121d' },
-  { label: 'PostgreSQL · SQL', color: '#c4b5fd', ink: '#140b24' },
-  { label: 'React · TypeScript', color: '#67e8f9', ink: '#03191e' },
-  { label: 'Desarrollador en formación', color: '#f472b6', ink: '#1f0614' },
-] as const;
-
 interface FormState {
   name: string;
   email: string;
@@ -120,28 +113,8 @@ export const Contact: React.FC = () => {
       className="studio-section studio-contact-section"
       aria-labelledby="contact-heading"
     >
-      {/* Escenario de cursores autónomos colaborativos estilo .rg */}
+      {/* Encabezado directo de contacto */}
       <div className="studio-rg-banner">
-        <div className="studio-rg-cursors" aria-hidden="true">
-          {FLOATING_CURSORS.map((cursor, idx) => (
-            <div
-              key={cursor.label}
-              className={`studio-rg-cursor studio-cursor-orbit-${idx}`}
-              style={
-                {
-                  '--c': cursor.color,
-                  '--ink': cursor.ink,
-                } as React.CSSProperties
-              }
-            >
-              <svg viewBox="0 0 20 24" className="studio-rg-cursor-arrow">
-                <path d="M1.5 1.5L6.5 21L10.5 13.8L18.5 11.2L1.5 1.5Z" />
-              </svg>
-              <span className="studio-rg-cursor-tag">{cursor.label}</span>
-            </div>
-          ))}
-        </div>
-
         <div className="studio-container studio-rg-cta">
           <div className="studio-section-kicker-wrap">
             <span className="studio-kicker-label">Contacto · Conversación Directa</span>
@@ -149,7 +122,7 @@ export const Contact: React.FC = () => {
 
           <h2 id="contact-heading" className="studio-rg-cta-say">
             ¿Tienes un proyecto o propuesta técnica?{' '}
-            <span className="studio-text-chrome-accent">Hagámoslo realidad.</span>
+            <span className="studio-text-chrome-accent">Conversemos.</span>
           </h2>
         </div>
       </div>
@@ -168,7 +141,7 @@ export const Contact: React.FC = () => {
           <div className="studio-contact-gf-bar">
             <GFLogo variant="footer" showSubtitle={false} size={42} />
             <div className="studio-contact-identity-text">
-              <span className="studio-badge-chrome">{personalProfile.hero.label}</span>
+              <span className="studio-about-role-label">{personalProfile.hero.label}</span>
               <span>
                 {personalProfile.location} · {personalProfile.timeZoneLabel}
               </span>
@@ -195,7 +168,7 @@ export const Contact: React.FC = () => {
               {copied ? <CheckIcon size={15} /> : <CopyIcon size={15} />}
               <span>{copied ? 'Copiado' : 'Copiar'}</span>
               <span className="studio-ft-copied" data-on={copied ? 'true' : undefined}>
-                ¡Listo!
+                En portapapeles
               </span>
             </button>
           </div>

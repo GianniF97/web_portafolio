@@ -7,43 +7,42 @@ interface Monogram3DProps {
   className?: string;
 }
 
-const G_BASE_X = -1.68;
-const F_BASE_X = 1.68;
-
-function createLetterGShape(): THREE.Shape {
-  const shape = new THREE.Shape();
-  // Silueta geométrica pesada con leve inclinación editorial (+0.125 dx/dy)
-  shape.moveTo(-1.45, -1.05);
-  shape.lineTo(1.26, -1.05);
-  shape.lineTo(1.41, 0.20);
-  shape.lineTo(0.18, 0.20);
-  shape.lineTo(0.13, -0.16);
-  shape.lineTo(0.76, -0.16);
-  shape.lineTo(0.71, -0.58);
-  shape.lineTo(-0.60, -0.58);
-  shape.lineTo(-0.46, 0.56);
-  shape.lineTo(1.46, 0.56);
-  shape.lineTo(1.52, 1.05);
-  shape.lineTo(-1.19, 1.05);
-  shape.closePath();
-  return shape;
+interface ModuleSpec {
+  id: string;
+  shape: THREE.Shape;
+  baseZ: number;
+  depthWeight: number;
+  lerpFactor: number;
+  hoverSpread: [number, number, number];
+  burstVector: [number, number, number];
+  burstRot: [number, number, number];
+  waveDelaySec: number;
 }
 
-function createLetterFShape(): THREE.Shape {
-  const shape = new THREE.Shape();
-  // Contorno geométrico hermano de la letra F con trazos calibrados para biselado 3D
-  shape.moveTo(-1.42, -1.05);
-  shape.lineTo(-0.58, -1.05);
-  shape.lineTo(-0.48, -0.22);
-  shape.lineTo(0.95, -0.22);
-  shape.lineTo(1.02, 0.26);
-  shape.lineTo(-0.42, 0.26);
-  shape.lineTo(-0.38, 0.55);
-  shape.lineTo(1.45, 0.55);
-  shape.lineTo(1.52, 1.05);
-  shape.lineTo(-1.16, 1.05);
-  shape.closePath();
-  return shape;
+interface ModuleRuntime {
+  spec: ModuleSpec;
+  mesh: THREE.Mesh;
+  geometry: THREE.ExtrudeGeometry;
+  edgesGeometry: THREE.EdgesGeometry;
+  edgesMaterial: THREE.LineBasicMaterial;
+  basePos: THREE.Vector3;
+  // Inercia independiente para paralaje por profundidad
+  curNx: number;
+  curNy: number;
+  // Resortes para onda de expansión al clic
+  sx: number;
+  sy: number;
+  sz: number;
+  srx: number;
+  sry: number;
+  srz: number;
+  vx: number;
+  vy: number;
+  vz: number;
+  vrx: number;
+  vry: number;
+  vrz: number;
+  pendingKickAt: number | null;
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -51,16 +50,108 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 /**
- * Monograma GF esculpido en 3D real mediante WebGL / Three.js:
- * - Dos mallas independientes ExtrudeGeometry biseladas (G y F) con material PBR metálico.
- * - Entorno procedural RoomEnvironment + PMREMGenerator y dos luces orbitales reactivas.
- * - Coreografía: Hero Reveal con resorte amortiguado, seguimiento magnético con paralaje,
- *   separación en hover (±0.18 u.), giro giroscópico 360° al hacer clic e idle breathing.
+ * Trazo 1 de G: arco arquitectónico principal estilizado con cortes y chaflanes a 45°.
+ */
+function createGArcShape(): THREE.Shape {
+  const s = new THREE.Shape();
+  s.moveTo(-0.38, 1.04);
+  s.lineTo(-0.70, 0.72);
+  s.lineTo(-1.86, 0.72);
+  s.lineTo(-2.10, 0.48);
+  s.lineTo(-2.10, -0.48);
+  s.lineTo(-1.86, -0.72);
+  s.lineTo(-0.68, -0.72);
+  s.lineTo(-0.36, -1.04);
+  s.lineTo(-2.06, -1.04);
+  s.lineTo(-2.42, -0.68);
+  s.lineTo(-2.42, 0.68);
+  s.lineTo(-2.06, 1.04);
+  s.closePath();
+  return s;
+}
+
+/**
+ * Trazo 2 de G: espolón y barra transversal L escalonada al frente en eje Z.
+ */
+function createGCrossbarShape(): THREE.Shape {
+  const s = new THREE.Shape();
+  s.moveTo(-0.66, -0.96);
+  s.lineTo(-0.66, -0.16);
+  s.lineTo(-1.42, -0.16);
+  s.lineTo(-1.10, 0.16);
+  s.lineTo(-0.34, 0.16);
+  s.lineTo(-0.34, -0.96);
+  s.closePath();
+  return s;
+}
+
+/**
+ * Trazo 1 de F: asta vertical arquitectónica con terminaciones diagonales a 45°.
+ */
+function createFStemShape(): THREE.Shape {
+  const s = new THREE.Shape();
+  s.moveTo(0.38, -1.04);
+  s.lineTo(0.70, -0.72);
+  s.lineTo(0.70, 1.04);
+  s.lineTo(0.56, 1.04);
+  s.lineTo(0.38, 0.86);
+  s.closePath();
+  return s;
+}
+
+/**
+ * Trazo 2 de F: travesaño superior escalonado detrás del asta con remate a 45°.
+ */
+function createFTopShape(): THREE.Shape {
+  const s = new THREE.Shape();
+  s.moveTo(0.56, 0.72);
+  s.lineTo(2.10, 0.72);
+  s.lineTo(2.42, 1.04);
+  s.lineTo(0.56, 1.04);
+  s.closePath();
+  return s;
+}
+
+/**
+ * Trazo 3 de F: travesaño medio adelantado en eje Z con corte limpio a 45°.
+ */
+function createFMidShape(): THREE.Shape {
+  const s = new THREE.Shape();
+  s.moveTo(0.56, -0.16);
+  s.lineTo(1.66, -0.16);
+  s.lineTo(1.98, 0.16);
+  s.lineTo(0.56, 0.16);
+  s.closePath();
+  return s;
+}
+
+function springStep(
+  pos: number,
+  vel: number,
+  target: number,
+  stiffness: number,
+  damping: number,
+  dt: number
+): [number, number] {
+  const force = (target - pos) * stiffness;
+  const nextVel = (vel + force * dt) * Math.exp(-damping * dt);
+  const nextPos = pos + nextVel * dt;
+  return [nextPos, nextVel];
+}
+
+/**
+ * Escultura tipográfica contemporánea GF en WebGL / Three.js:
+ * - 5 segmentos arquitectónicos modulares (G en 2 trazos, F en 3 trazos) con cortes a 45°
+ *   y escalonamiento real en eje Z.
+ * - Cristal de obsidiana ahumada (MeshPhysicalMaterial con transmisión y refracción) +
+ *   contorno quirúrgico EdgesGeometry en blanco puro.
+ * - Paralaje modular independiente por profundidad, expansión sutil en hover y onda de
+ *   reensamblaje magnético con resorte amortiguado al hacer clic.
  */
 export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) => {
   const { calmMode, liteMode } = useDisplayMode();
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const triggerSpinRef = useRef<(() => void) | null>(null);
+  const triggerWaveRef = useRef<(() => void) | null>(null);
   const [webglFailed, setWebglFailed] = useState(false);
 
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
@@ -100,7 +191,7 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.toneMappingExposure = 1.25;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const initialRect = container.getBoundingClientRect();
@@ -110,10 +201,10 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
     container.replaceChildren(canvas);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(16, initialW / initialH, 0.1, 60);
-    camera.position.set(0, 0, 12.2);
+    const camera = new THREE.PerspectiveCamera(18, initialW / initialH, 0.1, 60);
+    camera.position.set(0, 0, 10.6);
 
-    // Iluminación de estudio procedural sin HDR externos
+    // RoomEnvironment minimalista para reflejos limpios de vidrio pulido
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     pmremGenerator.compileEquirectangularShader();
     const roomEnvironment = new RoomEnvironment();
@@ -121,65 +212,151 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
     scene.environment = envRT.texture;
     roomEnvironment.dispose();
 
-    const ambientFill = new THREE.AmbientLight(0xdbeafe, 0.25);
-    scene.add(ambientFill);
+    // Dos luces puntuales suaves que dibujan reflejos limpios sobre los biseles y el vidrio
+    const coolPointLight = new THREE.PointLight(0xe2e8f0, 48, 26, 1.45);
+    coolPointLight.position.set(-4.2, 2.8, 4.6);
+    scene.add(coolPointLight);
 
-    // Luz fría plateada/azulada y luz cálida de borde que orbitan siguiendo el cursor
-    const coolAccentLight = new THREE.DirectionalLight(0x7dd3fc, 2.7);
-    coolAccentLight.position.set(-4.5, 3.2, 5.2);
-    scene.add(coolAccentLight);
+    const rimPointLight = new THREE.PointLight(0x94a3b8, 40, 26, 1.45);
+    rimPointLight.position.set(4.4, -2.2, 3.8);
+    scene.add(rimPointLight);
 
-    const warmRimLight = new THREE.DirectionalLight(0xfff1dc, 2.35);
-    warmRimLight.position.set(4.8, -2.4, 4.4);
-    scene.add(warmRimLight);
+    const obsidianGlassMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x121215,
+      transmission: 0.88,
+      ior: 1.55,
+      thickness: 1.4,
+      roughness: 0.07,
+      metalness: 0.08,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.05,
+      attenuationColor: new THREE.Color(0x94a3b8),
+      attenuationDistance: 1.65,
+      envMapIntensity: 1.85,
+      specularIntensity: 1.0,
+      transparent: true,
+      opacity: 1.0,
+    });
 
     const extrudeOptions: THREE.ExtrudeGeometryOptions = {
-      depth: 0.46,
+      depth: 0.28,
       bevelEnabled: true,
-      bevelThickness: 0.11,
-      bevelSize: 0.075,
+      bevelThickness: 0.042,
+      bevelSize: 0.032,
       bevelOffset: 0,
-      bevelSegments: 5,
+      bevelSegments: 4,
       curveSegments: 16,
     };
 
-    const gGeometry = new THREE.ExtrudeGeometry(createLetterGShape(), extrudeOptions);
-    gGeometry.center();
+    const specs: ModuleSpec[] = [
+      {
+        id: 'g-arc',
+        shape: createGArcShape(),
+        baseZ: 0.0,
+        depthWeight: 0.55,
+        lerpFactor: 0.055,
+        hoverSpread: [-0.07, 0.02, -0.05],
+        burstVector: [-2.6, 0.85, -1.8],
+        burstRot: [0.65, -1.2, 0.32],
+        waveDelaySec: 0.0,
+      },
+      {
+        id: 'g-crossbar',
+        shape: createGCrossbarShape(),
+        baseZ: 0.16,
+        depthWeight: 1.3,
+        lerpFactor: 0.095,
+        hoverSpread: [-0.03, -0.03, 0.12],
+        burstVector: [-1.1, -1.25, 2.4],
+        burstRot: [-0.85, 1.15, -0.42],
+        waveDelaySec: 0.04,
+      },
+      {
+        id: 'f-stem',
+        shape: createFStemShape(),
+        baseZ: 0.06,
+        depthWeight: 0.8,
+        lerpFactor: 0.07,
+        hoverSpread: [0.04, -0.02, 0.04],
+        burstVector: [0.95, -1.1, -1.5],
+        burstRot: [0.55, 0.95, -0.25],
+        waveDelaySec: 0.07,
+      },
+      {
+        id: 'f-top',
+        shape: createFTopShape(),
+        baseZ: -0.12,
+        depthWeight: -0.65,
+        lerpFactor: 0.062,
+        hoverSpread: [0.09, 0.04, -0.1],
+        burstVector: [2.2, 1.35, -2.0],
+        burstRot: [-0.7, 1.05, 0.35],
+        waveDelaySec: 0.1,
+      },
+      {
+        id: 'f-mid',
+        shape: createFMidShape(),
+        baseZ: 0.22,
+        depthWeight: 1.45,
+        lerpFactor: 0.11,
+        hoverSpread: [0.09, -0.02, 0.14],
+        burstVector: [2.5, -0.6, 2.6],
+        burstRot: [0.85, -1.1, -0.3],
+        waveDelaySec: 0.13,
+      },
+    ];
 
-    const fGeometry = new THREE.ExtrudeGeometry(createLetterFShape(), extrudeOptions);
-    fGeometry.center();
+    const rootGroup = new THREE.Group();
+    scene.add(rootGroup);
 
-    const gMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x677487,
-      metalness: 0.92,
-      roughness: 0.18,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.12,
-      iridescence: 0.25,
-      iridescenceIOR: 1.35,
-      envMapIntensity: 1.5,
-      reflectivity: 1.0,
+    const modules: ModuleRuntime[] = specs.map((spec) => {
+      const geometry = new THREE.ExtrudeGeometry(spec.shape, extrudeOptions);
+      geometry.computeBoundingBox();
+      const bbox = geometry.boundingBox;
+      const cx = bbox ? (bbox.min.x + bbox.max.x) * 0.5 : 0;
+      const cy = bbox ? (bbox.min.y + bbox.max.y) * 0.5 : 0;
+      const cz = bbox ? (bbox.min.z + bbox.max.z) * 0.5 : 0;
+      // Centramos la geometría alrededor de su propio pivote conservando su posición exacta en GF
+      geometry.translate(-cx, -cy, -cz);
+
+      const mesh = new THREE.Mesh(geometry, obsidianGlassMaterial);
+      const basePos = new THREE.Vector3(cx, cy, spec.baseZ);
+      mesh.position.copy(basePos);
+
+      const edgesGeometry = new THREE.EdgesGeometry(geometry, 24);
+      const edgesMaterial = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.18,
+      });
+      const edgesLine = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+      mesh.add(edgesLine);
+      rootGroup.add(mesh);
+
+      return {
+        spec,
+        mesh,
+        geometry,
+        edgesGeometry,
+        edgesMaterial,
+        basePos,
+        curNx: 0,
+        curNy: 0,
+        sx: 0,
+        sy: 0,
+        sz: 0,
+        srx: 0,
+        sry: 0,
+        srz: 0,
+        vx: 0,
+        vy: 0,
+        vz: 0,
+        vrx: 0,
+        vry: 0,
+        vrz: 0,
+        pendingKickAt: null,
+      };
     });
-
-    const fMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x5f7b92,
-      metalness: 0.92,
-      roughness: 0.18,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.12,
-      iridescence: 0.25,
-      iridescenceIOR: 1.4,
-      envMapIntensity: 1.5,
-      reflectivity: 1.0,
-    });
-
-    const gfGroup = new THREE.Group();
-    const gMesh = new THREE.Mesh(gGeometry, gMaterial);
-    const fMesh = new THREE.Mesh(fGeometry, fMaterial);
-    gMesh.position.set(G_BASE_X, 0, 0);
-    fMesh.position.set(F_BASE_X, 0, 0);
-    gfGroup.add(gMesh, fMesh);
-    scene.add(gfGroup);
 
     const renderFrame = () => {
       renderer.render(scene, camera);
@@ -199,14 +376,18 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
     resizeObserver.observe(container);
 
     if (isStatic) {
-      triggerSpinRef.current = null;
+      triggerWaveRef.current = null;
+      // Leve inclinación arquitectónica estática para lucir las capas de obsidiana sin bucle
+      rootGroup.rotation.set(0.05, -0.09, 0);
       renderFrame();
       return () => {
         resizeObserver.disconnect();
-        gGeometry.dispose();
-        fGeometry.dispose();
-        gMaterial.dispose();
-        fMaterial.dispose();
+        for (const mod of modules) {
+          mod.geometry.dispose();
+          mod.edgesGeometry.dispose();
+          mod.edgesMaterial.dispose();
+        }
+        obsidianGlassMaterial.dispose();
         envRT.dispose();
         pmremGenerator.dispose();
         renderer.dispose();
@@ -214,51 +395,29 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
       };
     }
 
-    const stageEl = (container.closest('.studio-hero-stage') as HTMLElement | null) ?? document.documentElement;
+    const stageEl =
+      (container.closest('.studio-hero-stage') as HTMLElement | null) ?? document.documentElement;
 
-    // Estado de puntero magnético y hover directo sobre GF
     let targetNx = 0;
     let targetNy = 0;
-    let currentNx = 0;
-    let currentNy = 0;
     let pointerActive = false;
     let pointerBlend = 0;
     let isHovered = false;
-    let hoverSplit = 0;
+    let hoverMix = 0;
+    let waveFlash = 0;
+    let elapsedSec = 0;
+    let rafId: number | null = null;
+    let lastTimestamp = performance.now();
 
-    // Hero Reveal (resorte amortiguado de entrada desde ángulos/profundidad opuestos)
-    let gRevealX = -1.35;
-    let gRevealY = 0.28;
-    let gRevealZ = -3.1;
-    let gRevealRx = -0.34;
-    let gRevealRy = 0.85;
-    let gRevealVx = 0;
-    let gRevealVy = 0;
-    let gRevealVz = 0;
-    let gRevealVrx = 0;
-    let gRevealVry = 0;
-
-    let fRevealX = 1.35;
-    let fRevealY = -0.28;
-    let fRevealZ = 2.3;
-    let fRevealRx = 0.34;
-    let fRevealRy = -0.85;
-    let fRevealVx = 0;
-    let fRevealVy = 0;
-    let fRevealVz = 0;
-    let fRevealVrx = 0;
-    let fRevealVry = 0;
-
-    // Giro giroscópico 360° en eje Y con rebote elástico al hacer clic
-    let spinTargetY = 0;
-    let spinAngleY = 0;
-    let spinVelocityY = 0;
-
-    triggerSpinRef.current = () => {
-      spinTargetY += Math.PI * 2;
+    triggerWaveRef.current = () => {
+      waveFlash = 1.0;
+      const nowSec = elapsedSec;
+      for (const mod of modules) {
+        mod.pendingKickAt = nowSec + mod.spec.waveDelaySec;
+      }
     };
 
-    const updatePointerFromClient = (clientX: number, clientY: number) => {
+    const updatePointer = (clientX: number, clientY: number) => {
       const rect = stageEl.getBoundingClientRect();
       targetNx = clamp((clientX - rect.left) / Math.max(rect.width, 1) - 0.5, -0.5, 0.5) * 2;
       targetNy = clamp((clientY - rect.top) / Math.max(rect.height, 1) - 0.5, -0.5, 0.5) * 2;
@@ -266,13 +425,13 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
     };
 
     const handleMouseMove = (event: MouseEvent) => {
-      updatePointerFromClient(event.clientX, event.clientY);
+      updatePointer(event.clientX, event.clientY);
     };
 
     const handleTouchMove = (event: TouchEvent) => {
       const touch = event.touches[0];
       if (!touch) return;
-      updatePointerFromClient(touch.clientX, touch.clientY);
+      updatePointer(touch.clientX, touch.clientY);
     };
 
     const resetPointer = () => {
@@ -289,24 +448,6 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
       isHovered = false;
     };
 
-    let rafId: number | null = null;
-    let lastTimestamp = performance.now();
-    let elapsedSec = 0;
-
-    const springStep = (
-      pos: number,
-      vel: number,
-      target: number,
-      stiffness: number,
-      damping: number,
-      dt: number
-    ): [number, number] => {
-      const force = (target - pos) * stiffness;
-      const nextVel = (vel + force * dt) * Math.exp(-damping * dt);
-      const nextPos = pos + nextVel * dt;
-      return [nextPos, nextVel];
-    };
-
     const tick = (now: number) => {
       if (document.hidden) {
         rafId = null;
@@ -318,94 +459,98 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
       lastTimestamp = now;
       elapsedSec += dt;
 
-      const lerpAlpha = 1 - Math.pow(1 - 0.085, dtMs / 16.667);
-      const hoverAlpha = 1 - Math.pow(1 - 0.12, dtMs / 16.667);
-      const blendAlpha = 1 - Math.pow(1 - 0.055, dtMs / 16.667);
+      const blendAlpha = 1 - Math.pow(1 - 0.05, dtMs / 16.667);
+      const hoverAlpha = 1 - Math.pow(1 - 0.1, dtMs / 16.667);
 
-      currentNx += (targetNx - currentNx) * lerpAlpha;
-      currentNy += (targetNy - currentNy) * lerpAlpha;
       pointerBlend += ((pointerActive ? 1 : 0) - pointerBlend) * blendAlpha;
-      hoverSplit += ((isHovered ? 1 : 0) - hoverSplit) * hoverAlpha;
+      hoverMix += ((isHovered ? 1 : 0) - hoverMix) * hoverAlpha;
+      waveFlash = Math.max(0, waveFlash - dt * 1.45);
 
-      // Paso de resorte Hero Reveal para G y F
-      [gRevealX, gRevealVx] = springStep(gRevealX, gRevealVx, 0, 118, 12.5, dt);
-      [gRevealY, gRevealVy] = springStep(gRevealY, gRevealVy, 0, 118, 12.5, dt);
-      [gRevealZ, gRevealVz] = springStep(gRevealZ, gRevealVz, 0, 110, 12.0, dt);
-      [gRevealRx, gRevealVrx] = springStep(gRevealRx, gRevealVrx, 0, 115, 12.0, dt);
-      [gRevealRy, gRevealVry] = springStep(gRevealRy, gRevealVry, 0, 115, 12.0, dt);
+      // Flotación gravitacional lenta en reposo
+      const idleWeight = 1 - pointerBlend * 0.6;
+      const idleFloatY = Math.sin(elapsedSec * 0.85) * 0.045 * idleWeight;
+      const idleDriftX = Math.sin(elapsedSec * 0.55) * 0.03 * idleWeight;
+      const idleDriftY = Math.cos(elapsedSec * 0.65) * 0.045 * idleWeight;
 
-      [fRevealX, fRevealVx] = springStep(fRevealX, fRevealVx, 0, 118, 12.5, dt);
-      [fRevealY, fRevealVy] = springStep(fRevealY, fRevealVy, 0, 118, 12.5, dt);
-      [fRevealZ, fRevealVz] = springStep(fRevealZ, fRevealVz, 0, 110, 12.0, dt);
-      [fRevealRx, fRevealVrx] = springStep(fRevealRx, fRevealVrx, 0, 115, 12.0, dt);
-      [fRevealRy, fRevealVry] = springStep(fRevealRy, fRevealVry, 0, 115, 12.0, dt);
+      let sumNx = 0;
+      let sumNy = 0;
 
-      // Resorte subamortiguado para giro giroscópico 360° con rebote elástico al volver al frente
-      [spinAngleY, spinVelocityY] = springStep(spinAngleY, spinVelocityY, spinTargetY, 82, 8.2, dt);
+      for (let i = 0; i < modules.length; i += 1) {
+        const mod = modules[i];
+        const { spec } = mod;
 
-      // Respiración orgánica en reposo
-      const idleWeight = 1 - pointerBlend * 0.65;
-      const idleY = Math.sin(elapsedSec * 1.25) * 0.068 * idleWeight;
-      const idleRx = Math.cos(elapsedSec * 0.95) * 0.045 * idleWeight;
-      const idleRy = Math.sin(elapsedSec * 0.72) * 0.075 * idleWeight;
+        // Cada módulo posee su propia inercia lerp
+        const modAlpha = 1 - Math.pow(1 - spec.lerpFactor, dtMs / 16.667);
+        mod.curNx += (targetNx - mod.curNx) * modAlpha;
+        mod.curNy += (targetNy - mod.curNy) * modAlpha;
 
-      // Inclinación magnética conjunta + giroscópico
-      const magRx = currentNy * 0.28;
-      const magRy = currentNx * 0.34;
-      const gyroTiltX = clamp(spinVelocityY * 0.032, -0.22, 0.22);
+        sumNx += mod.curNx;
+        sumNy += mod.curNy;
 
-      gfGroup.position.y = idleY;
-      gfGroup.rotation.x = magRx + idleRx + gyroTiltX;
-      gfGroup.rotation.y = magRy + idleRy + spinAngleY;
+        // Disparo escalonado de la onda magnética al hacer clic
+        if (mod.pendingKickAt !== null && elapsedSec >= mod.pendingKickAt) {
+          mod.pendingKickAt = null;
+          mod.vx += spec.burstVector[0];
+          mod.vy += spec.burstVector[1];
+          mod.vz += spec.burstVector[2];
+          mod.vrx += spec.burstRot[0];
+          mod.vry += spec.burstRot[1];
+          mod.vrz += spec.burstRot[2];
+        }
 
-      // Separación en hover (±0.18 u. en X y Z) + micro-paralaje interno entre G y F
-      const parallaxZ = currentNx * 0.14;
-      const hoverOffset = hoverSplit * 0.18;
+        // Reensamblaje con resorte amortiguado hacia el origen modular
+        [mod.sx, mod.vx] = springStep(mod.sx, mod.vx, 0, 92, 9.6, dt);
+        [mod.sy, mod.vy] = springStep(mod.sy, mod.vy, 0, 92, 9.6, dt);
+        [mod.sz, mod.vz] = springStep(mod.sz, mod.vz, 0, 88, 9.4, dt);
+        [mod.srx, mod.vrx] = springStep(mod.srx, mod.vrx, 0, 86, 9.2, dt);
+        [mod.sry, mod.vry] = springStep(mod.sry, mod.vry, 0, 86, 9.2, dt);
+        [mod.srz, mod.vrz] = springStep(mod.srz, mod.vrz, 0, 86, 9.2, dt);
 
-      gMesh.position.set(
-        G_BASE_X - hoverOffset + gRevealX,
-        gRevealY,
-        hoverOffset + parallaxZ + gRevealZ
+        // Desplazamiento modular por profundidad (paralaje interno + hover milimétrico + resorte)
+        const depthOffsetZ = mod.curNx * 0.14 * spec.depthWeight;
+        const depthOffsetX = mod.curNx * 0.055 * spec.depthWeight;
+        const depthOffsetY = -mod.curNy * 0.04 * spec.depthWeight;
+        const idlePhaseY = Math.sin(elapsedSec * 0.75 + i * 1.1) * 0.014 * idleWeight;
+
+        mod.mesh.position.set(
+          mod.basePos.x + depthOffsetX + spec.hoverSpread[0] * hoverMix + mod.sx,
+          mod.basePos.y + depthOffsetY + spec.hoverSpread[1] * hoverMix + idlePhaseY + mod.sy,
+          mod.basePos.z + depthOffsetZ + spec.hoverSpread[2] * hoverMix + mod.sz
+        );
+
+        mod.mesh.rotation.set(
+          mod.curNy * 0.11 * spec.depthWeight + mod.srx,
+          mod.curNx * 0.14 * spec.depthWeight + mod.sry,
+          mod.srz
+        );
+
+        // Intensificación luminosa de aristas en hover y pulso magnético
+        mod.edgesMaterial.opacity = clamp(0.18 + hoverMix * 0.34 + waveFlash * 0.28, 0.18, 0.8);
+      }
+
+      const avgNx = sumNx / modules.length;
+      const avgNy = sumNy / modules.length;
+
+      rootGroup.position.set(0, idleFloatY, 0);
+      rootGroup.rotation.set(avgNy * 0.16 + idleDriftX, avgNx * 0.2 + idleDriftY, 0);
+
+      // Reflejo limpio tipo vidrio pulido en hover y movimiento
+      obsidianGlassMaterial.envMapIntensity = 1.85 + hoverMix * 0.9 + waveFlash * 0.45;
+
+      const lightOrbit = elapsedSec * 0.35 + avgNx * 0.9;
+      coolPointLight.position.set(
+        -4.0 + Math.cos(lightOrbit) * 1.4 + avgNx * 2.2,
+        2.6 - avgNy * 2.0,
+        4.6 + Math.sin(lightOrbit) * 1.0
       );
-      gMesh.rotation.set(
-        gRevealRx + currentNy * 0.05,
-        gRevealRy - hoverSplit * 0.05,
-        0
-      );
+      coolPointLight.intensity = 48 + hoverMix * 16;
 
-      fMesh.position.set(
-        F_BASE_X + hoverOffset + fRevealX,
-        fRevealY,
-        -hoverOffset - parallaxZ + fRevealZ
+      rimPointLight.position.set(
+        4.2 - Math.cos(lightOrbit) * 1.4 - avgNx * 1.8,
+        -2.2 + avgNy * 1.8,
+        3.6 - Math.sin(lightOrbit) * 1.0
       );
-      fMesh.rotation.set(
-        fRevealRx - currentNy * 0.05,
-        fRevealRy + hoverSplit * 0.05,
-        0
-      );
-
-      // Intensidad especular reactiva al hover
-      const targetEnvIntensity = 1.5 + hoverSplit * 0.95;
-      gMaterial.envMapIntensity = targetEnvIntensity;
-      fMaterial.envMapIntensity = targetEnvIntensity;
-      gMaterial.clearcoatRoughness = 0.12 - hoverSplit * 0.06;
-      fMaterial.clearcoatRoughness = 0.12 - hoverSplit * 0.06;
-
-      // Órbita dinámica de luces siguiendo el cursor sobre los biseles
-      const orbitAngle = elapsedSec * 0.45 + currentNx * 1.15;
-      coolAccentLight.position.set(
-        Math.cos(orbitAngle) * 5.2 + currentNx * 2.5,
-        Math.sin(orbitAngle * 0.8) * 3.0 - currentNy * 2.8,
-        5.0 + Math.sin(orbitAngle) * 1.4
-      );
-      coolAccentLight.intensity = 2.6 + hoverSplit * 0.7;
-
-      warmRimLight.position.set(
-        -Math.cos(orbitAngle) * 5.2 - currentNx * 1.8,
-        -Math.sin(orbitAngle * 0.8) * 2.6 + currentNy * 2.4,
-        4.6 - Math.sin(orbitAngle) * 1.2
-      );
-      warmRimLight.intensity = 2.3 + hoverSplit * 0.65;
+      rimPointLight.intensity = 40 + hoverMix * 14;
 
       renderFrame();
       rafId = window.requestAnimationFrame(tick);
@@ -442,7 +587,7 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
     startLoop();
 
     return () => {
-      triggerSpinRef.current = null;
+      triggerWaveRef.current = null;
       if (rafId !== null) window.cancelAnimationFrame(rafId);
       resizeObserver.disconnect();
       stageEl.removeEventListener('mousemove', handleMouseMove);
@@ -456,10 +601,12 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
       window.removeEventListener('blur', resetPointer);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
 
-      gGeometry.dispose();
-      fGeometry.dispose();
-      gMaterial.dispose();
-      fMaterial.dispose();
+      for (const mod of modules) {
+        mod.geometry.dispose();
+        mod.edgesGeometry.dispose();
+        mod.edgesMaterial.dispose();
+      }
+      obsidianGlassMaterial.dispose();
       envRT.dispose();
       pmremGenerator.dispose();
       renderer.dispose();
@@ -468,8 +615,8 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
   }, [isStatic]);
 
   const handleActivate = () => {
-    if (!isStatic && triggerSpinRef.current) {
-      triggerSpinRef.current();
+    if (!isStatic && triggerWaveRef.current) {
+      triggerWaveRef.current();
     }
   };
 
@@ -478,16 +625,22 @@ export const Monogram3D: React.FC<Monogram3DProps> = memo(({ className = '' }) =
       <div className={`studio-gf-monolith ${className}`} aria-label="Monograma GF">
         <svg viewBox="0 0 340 128" className="studio-gf-chrome-base" role="img" aria-hidden="true">
           <path
-            d="M44 10H156L146 28H26L44 10ZM184 10H304L322 28H174L184 10Z"
-            fill="#94A3B8"
+            d="M148 24H58L42 40V88L58 104H148L134 90H66L54 78V50L66 38H134Z"
+            fill="#14161B"
+            stroke="rgba(255,255,255,0.22)"
+            strokeWidth="1.5"
           />
           <path
-            d="M26 28H146L154 52H68V94H120V78H92V58H164L154 118H16L26 28Z"
-            fill="#CBD5E1"
+            d="M134 62H92L106 76H134V104H148V62Z"
+            fill="#1D2027"
+            stroke="rgba(255,255,255,0.26)"
+            strokeWidth="1.5"
           />
           <path
-            d="M174 28H322L312 52H214V68H288L282 90H214V118H166L174 28Z"
-            fill="#94A3B8"
+            d="M188 24V104H204V38L188 24ZM198 24V38H288L274 24H198ZM198 58V72H262L248 58H198Z"
+            fill="#14161B"
+            stroke="rgba(255,255,255,0.22)"
+            strokeWidth="1.5"
           />
         </svg>
       </div>

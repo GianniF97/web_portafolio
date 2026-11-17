@@ -7,7 +7,7 @@ import { ProjectWindowMockup } from '../components/ProjectWindowMockup';
 
 type StatusFilter = 'Todos' | ProjectStatus;
 
-const PROJ_HEAD_WORDS = ['Sistemas', 'y', 'experiencias'];
+const PROJ_HEAD_WORDS = ['Sistemas', 'y', 'aplicaciones'];
 
 export const Projects: React.FC = () => {
   const { calmMode } = useDisplayMode();
@@ -76,12 +76,12 @@ export const Projects: React.FC = () => {
                   </span>
                 ))}
                 <span className="studio-sv-word" style={{ '--w': 3 } as React.CSSProperties}>
-                  <span className="studio-sv-wow">en producción.</span>
+                  <span className="studio-sv-wow">desarrolladas.</span>
                 </span>
               </h2>
               <p className="studio-section-lead">
-                Cada pieza combina modelado estructural, lógica verificable e interfaz clara.
-                Alterna entre vista, flujo arquitectónico, ficha técnica y adaptación móvil dentro de
+                Sistemas de gestión, aplicaciones web en producción y algoritmos construidos durante
+                mi formación. Alterna entre vista, arquitectura, especificación y formato móvil en
                 cada ventana.
               </p>
             </div>
@@ -124,19 +124,19 @@ export const Projects: React.FC = () => {
               <div className="studio-pj-inner">
                 <div className="studio-pj-text" data-at="0.06">
                   <div className="studio-pj-badges-row">
-                    <span className="studio-pj-app">
-                      <span className="studio-pj-icon">
+                    <div className="studio-pj-title-lockup">
+                      <span className="studio-pj-mark" aria-hidden="true">
                         <ProjectLogo projectId={project.id} size={22} />
                       </span>
-                      <span>{project.title}</span>
-                    </span>
+                      <h3 className="studio-pj-title">{project.title}</h3>
+                    </div>
 
                     <span
                       className={`studio-project-status ${
                         project.status === 'Terminado' ? 'is-done' : 'is-wip'
                       }`}
                     >
-                      <span>{project.status}</span>
+                      {project.status}
                     </span>
                   </div>
 

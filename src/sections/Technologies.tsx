@@ -4,16 +4,11 @@ import {
   techCategories,
   technologiesData,
   type LearningStage,
-  type TechCategoryId,
   type TechItem,
 } from '../data/portfolioData';
 import {
-  CodeIcon,
-  DatabaseIcon,
   LayersIcon,
-  ShieldIcon,
   TechIcon,
-  TerminalIcon,
 } from '../components/Icons';
 
 type StageFilter = 'Todas' | LearningStage;
@@ -37,33 +32,25 @@ const STAGE_OPTIONS: StageFilter[] = ['Todas', 'Práctica activa', 'En aprendiza
 
 const TECH_HEAD_WORDS = ['Herramientas', 'reales,', 'aplicadas', 'con'];
 
-const CATEGORY_ICON_MAP: Record<TechCategoryId, React.FC<{ size?: number }>> = {
-  backend: CodeIcon,
-  'bases-de-datos': DatabaseIcon,
-  lenguajes: TerminalIcon,
-  frontend: LayersIcon,
-  herramientas: ShieldIcon,
-};
-
-const BURST_COLORS = ['#67e8f9', '#c4b5fd', '#93c5fd', '#f8fafc'];
+const BURST_COLORS = ['#e4e4e7', '#a1a1aa', '#f5f5f5', '#d4d4d8'];
 
 function buildInitialPilePositions(items: TechItem[]): Record<string, PileItemState> {
   const map: Record<string, PileItemState> = {};
-  const cols = 4;
+  const cols = 3;
   items.forEach((item, idx) => {
     const col = idx % cols;
     const row = Math.floor(idx / cols);
-    // Posiciones en porcentaje (%) relativas a .studio-sv-pile con distribución escalonada sin solapamiento excesivo
-    const staggerX = row % 2 === 1 ? 4 : 0;
-    const offsetX = ((idx * 13) % 7) - 3;
-    const offsetY = ((idx * 9) % 5) - 2;
-    const xPct = 4 + col * 24 + staggerX + offsetX;
-    const yPct = 6 + row * 19 + offsetY;
-    const rotate = ((idx * 11) % 11) - 5;
+    // Distribución en 3 columnas escalonadas dentro de .studio-sv-pile sin solapamientos
+    const staggerX = row % 2 === 1 ? 3 : 0;
+    const offsetX = ((idx * 7) % 5) - 2;
+    const offsetY = ((idx * 5) % 3) - 1;
+    const xPct = 4 + col * 31 + staggerX + offsetX;
+    const yPct = 4 + row * 15.5 + offsetY;
+    const rotate = ((idx * 7) % 7) - 3;
     map[item.id] = {
       id: item.id,
-      x: Math.min(Math.max(xPct, 4), 73),
-      y: Math.min(Math.max(yPct, 5), 84),
+      x: Math.min(Math.max(xPct, 3), 70),
+      y: Math.min(Math.max(yPct, 3), 85),
       rotate,
       seedAngle: rotate,
     };
@@ -263,8 +250,8 @@ export const Technologies: React.FC = () => {
               </h2>
               <p className="studio-sv-lede">
                 Cada tecnología listada corresponde exclusivamente a implementaciones reales de mi
-                formación y proyectos activos. Arrastra o pulsa en la arena interactiva para
-                inspeccionar su contexto.
+                formación y proyectos activos. Arrastra o pulsa sobre cada ficha para inspeccionar su
+                contexto.
               </p>
             </div>
 
@@ -300,7 +287,7 @@ export const Technologies: React.FC = () => {
           >
             <div className="studio-pile-grid-lines" aria-hidden="true" />
             <span className="studio-pile-hint">
-              Arena interactiva · Arrastra o haz clic sobre cualquier tecnología
+              Mesa de trabajo · Arrastra o selecciona cualquier tecnología
             </span>
 
             <div className="studio-pile-items">
@@ -383,9 +370,6 @@ export const Technologies: React.FC = () => {
                 </div>
 
                 <div className="studio-inspector-hero">
-                  <div className="studio-inspector-icon-orb" aria-hidden="true">
-                    <TechIcon iconKey={activeTech.iconKey} size={32} />
-                  </div>
                   <div>
                     <h3 className="studio-inspector-title">{activeTech.name}</h3>
                     <p className="studio-inspector-subtitle">
@@ -410,21 +394,15 @@ export const Technologies: React.FC = () => {
           </aside>
         </div>
 
-        {/* Matriz de 5 columnas con iconos rotativos 3D */}
+        {/* Matriz editorial de 5 capas técnicas */}
         <div className="studio-sv-cols">
           {groupedCategories.map((category, catIdx) => {
-            const CatIcon = CATEGORY_ICON_MAP[category.id] ?? CodeIcon;
             return (
               <article
                 key={category.id}
                 className="studio-sv-col"
                 style={{ '--i': catIdx } as React.CSSProperties}
               >
-                <div className="studio-sv-icon" aria-hidden="true">
-                  <span className="studio-sv-swap">
-                    <CatIcon size={26} />
-                  </span>
-                </div>
                 <h3 className="studio-sv-name">{category.title}</h3>
                 <p className="studio-sv-line">{category.description}</p>
                 <ul className="studio-sv-list">

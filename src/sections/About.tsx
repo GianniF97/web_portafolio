@@ -43,7 +43,7 @@ export const About: React.FC = () => {
             </h2>
 
             <div className="studio-about-role-bar">
-              <span className="studio-badge-chrome">{personalProfile.hero.label}</span>
+              <span className="studio-about-role-label">{personalProfile.hero.label}</span>
               <span className="studio-role-subtext">{personalProfile.about.education}</span>
             </div>
 
@@ -63,8 +63,7 @@ export const About: React.FC = () => {
               <h3 className="studio-mini-heading">Foco de formación actual</h3>
               <ul className="studio-focus-list">
                 {personalProfile.focusAreas.map((area) => (
-                  <li key={area} className="studio-focus-pill">
-                    <span className="studio-focus-marker" aria-hidden="true" />
+                  <li key={area} className="studio-focus-item">
                     <span>{area}</span>
                   </li>
                 ))}

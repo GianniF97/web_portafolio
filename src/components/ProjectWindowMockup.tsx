@@ -65,11 +65,9 @@ export const ProjectWindowMockup: React.FC<ProjectWindowMockupProps> = ({ projec
   return (
     <div className="studio-pj-window">
       <div className="studio-pj-bar">
-        <div className="studio-pj-lights" aria-hidden="true">
-          <i className="light-close" />
-          <i className="light-min" />
-          <i className="light-zoom" />
-        </div>
+        <span className="studio-pj-bar-ref" title={addressLabel}>
+          {addressLabel}
+        </span>
 
         <div
           className="studio-pj-tabs"
