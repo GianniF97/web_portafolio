@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 export type AppRoutePath = '/' | '/privacidad' | '/cookies';
 
@@ -28,7 +28,7 @@ export const CALM_STORAGE_KEY = 'gf-studio-calm-mode';
 export const LITE_STORAGE_KEY = 'gf-studio-lite-mode';
 export const CONSENT_UPDATED_EVENT = 'gf-consent-updated';
 
-const BASE_DOCUMENT_TITLE = 'Gianni Ferrari · Analista de Sistemas | Portfolio';
+const BASE_DOCUMENT_TITLE = 'Gianni Ferrari | Analista de Sistemas & Software Developer';
 
 const DEFAULT_CONSENT: CookieConsentState = {
   necessary: true,
@@ -113,6 +113,15 @@ export const CookieConsentProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentPath, setCurrentPath] = useState<AppRoutePath>(() =>
     typeof window !== 'undefined' ? normalizePath(window.location.pathname) : '/'
   );
+  const scrollTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current !== null) {
+        window.clearTimeout(scrollTimerRef.current);
+      }
+    };
+  }, []);
 
   const persistConsent = useCallback((next: CookieConsentState) => {
     setConsent(next);
@@ -182,15 +191,20 @@ export const CookieConsentProvider: React.FC<{ children: React.ReactNode }> = ({
     setCurrentPath(path);
 
     if (typeof window !== 'undefined') {
+      if (scrollTimerRef.current !== null) {
+        window.clearTimeout(scrollTimerRef.current);
+        scrollTimerRef.current = null;
+      }
       if (cleanHash) {
-        window.setTimeout(() => {
+        scrollTimerRef.current = window.setTimeout(() => {
           const el = document.querySelector(cleanHash);
           if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
+          scrollTimerRef.current = null;
         }, 80);
       } else {
-        window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }
     }
   }, []);
@@ -199,7 +213,7 @@ export const CookieConsentProvider: React.FC<{ children: React.ReactNode }> = ({
     const handlePopState = () => {
       setCurrentPath(normalizePath(window.location.pathname));
       if (!window.location.hash) {
-        window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }
     };
     window.addEventListener('popstate', handlePopState);

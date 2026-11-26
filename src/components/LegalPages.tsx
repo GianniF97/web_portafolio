@@ -66,7 +66,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ path }) => {
             <span>Volver al inicio</span>
           </a>
 
-          <div className="studio-legal-tabs" role="tablist" aria-label="Documentos legales">
+          <div className="studio-legal-tabs" aria-label="Documentos legales">
             <a
               href="/privacidad"
               onClick={(e) => handleSwitchRoute(e, '/privacidad')}

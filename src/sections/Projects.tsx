@@ -1,194 +1,192 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { projectsData, type ProjectItem } from '../data/portfolioData';
 import { useDisplayMode } from '../context/DisplayModeContext';
-import { projectsData, type ProjectStatus } from '../data/portfolioData';
-import { ArrowUpRightIcon, GitHubIcon } from '../components/Icons';
-import { ProjectLogo } from '../components/ProjectLogo';
-import { ProjectWindowMockup } from '../components/ProjectWindowMockup';
+import { ArrowUpRightIcon, GitHubIcon, PlusIcon } from '../components/Icons';
 
-type StatusFilter = 'Todos' | ProjectStatus;
+type ProjectFilter = 'all' | 'live' | 'backend';
 
-const PROJ_HEAD_WORDS = ['Sistemas', 'y', 'aplicaciones'];
+interface ProjectCardProps {
+  project: ProjectItem;
+  calmMode: boolean;
+}
+
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, calmMode }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (calmMode || e.pointerType !== 'mouse') return;
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const rx = (e.clientX - rect.left) / Math.max(rect.width, 1);
+    const ry = (e.clientY - rect.top) / Math.max(rect.height, 1);
+    const rotY = (rx - 0.5) * 6.5;
+    const rotX = (0.5 - ry) * 6.5;
+    card.style.setProperty('--tilt-rx', `${rotX.toFixed(2)}deg`);
+    card.style.setProperty('--tilt-ry', `${rotY.toFixed(2)}deg`);
+    card.style.setProperty('--sheen-x', `${(rx * 100).toFixed(1)}%`);
+    card.style.setProperty('--sheen-y', `${(ry * 100).toFixed(1)}%`);
+  };
+
+  const resetPointer = (e: React.PointerEvent<HTMLElement>) => {
+    const card = e.currentTarget;
+    card.style.setProperty('--tilt-rx', '0deg');
+    card.style.setProperty('--tilt-ry', '0deg');
+  };
+
+  const hasDemo = Boolean(project.demoUrl);
+  const hasRepo = Boolean(project.repoUrl);
+
+  return (
+    <article
+      className="sp-project-card"
+      onPointerMove={handlePointerMove}
+      onPointerLeave={resetPointer}
+    >
+      <div className="sp-project-media">
+        <img
+          src={project.image.src}
+          alt={project.image.alt}
+          width={project.image.width}
+          height={project.image.height}
+          loading="lazy"
+          decoding="async"
+        />
+        <span className="sp-project-status">{project.status}</span>
+      </div>
+
+      <div className="sp-project-body">
+        <span className="sp-mono-caption">{project.category}</span>
+        <h3 className="sp-project-title">{project.title}</h3>
+        <p className="sp-project-subtitle">{project.subtitle}</p>
+        <p className="sp-project-desc">{project.problem}</p>
+
+        <div className="sp-tag-row">
+          {project.technologies.slice(0, 4).map((tech) => (
+            <span key={tech} className="sp-tag">
+              {tech}
+            </span>
+          ))}
+        </div>
+
+        {expanded && (
+          <div className="sp-project-details">
+            <p className="sp-project-goal">{project.goal}</p>
+            <ul className="sp-project-highlights">
+              {project.highlights.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="sp-project-footer">
+          <button
+            type="button"
+            className="sp-project-more-btn"
+            onClick={() => setExpanded((prev) => !prev)}
+            aria-expanded={expanded}
+          >
+            <PlusIcon size={14} className={expanded ? 'is-rotated' : undefined} />
+            <span>{expanded ? 'Ocultar detalles' : 'Decisiones técnicas'}</span>
+          </button>
+
+          <div className="sp-project-links">
+            {hasDemo && (
+              <a
+                href={project.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sp-project-link is-primary"
+              >
+                <span>Ver web</span>
+                <ArrowUpRightIcon size={13} />
+              </a>
+            )}
+            {hasRepo && (
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sp-project-link"
+              >
+                <GitHubIcon size={14} />
+                <span>Código</span>
+                <ArrowUpRightIcon size={13} />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+};
 
 export const Projects: React.FC = () => {
   const { calmMode } = useDisplayMode();
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('Todos');
+  const [filter, setFilter] = useState<ProjectFilter>('all');
 
-  const counts = useMemo<Record<StatusFilter, number>>(() => {
-    const done = projectsData.filter((p) => p.status === 'Terminado').length;
-    const wip = projectsData.filter((p) => p.status === 'En desarrollo').length;
-    const experimental = projectsData.filter((p) => p.status === 'Experimental').length;
-    return {
-      Todos: projectsData.length,
-      Terminado: done,
-      'En desarrollo': wip,
-      Experimental: experimental,
-    };
-  }, []);
-
-  const visibleProjects = useMemo(() => {
-    if (statusFilter === 'Todos') return projectsData;
-    return projectsData.filter((project) => project.status === statusFilter);
-  }, [statusFilter]);
-
-  const handleWindowPointerMove = useCallback(
-    (event: React.PointerEvent<HTMLElement>) => {
-      if (calmMode || event.pointerType !== 'mouse') return;
-      const el = event.currentTarget;
-      const rect = el.getBoundingClientRect();
-      const nx = (event.clientX - rect.left) / Math.max(rect.width, 1) - 0.5;
-      const ny = (event.clientY - rect.top) / Math.max(rect.height, 1) - 0.5;
-      el.style.setProperty('--tilt-x', `${(-ny * 5).toFixed(2)}deg`);
-      el.style.setProperty('--tilt-y', `${(nx * 6).toFixed(2)}deg`);
-      el.style.setProperty('--spotlight-x', `${((nx + 0.5) * 100).toFixed(1)}%`);
-      el.style.setProperty('--spotlight-y', `${((ny + 0.5) * 100).toFixed(1)}%`);
-    },
-    [calmMode]
-  );
-
-  const handleWindowPointerLeave = useCallback((event: React.PointerEvent<HTMLElement>) => {
-    const el = event.currentTarget;
-    el.style.setProperty('--tilt-x', '0deg');
-    el.style.setProperty('--tilt-y', '0deg');
-  }, []);
+  const filteredProjects = useMemo(() => {
+    if (filter === 'live') {
+      return projectsData.filter((p) => Boolean(p.demoUrl));
+    }
+    if (filter === 'backend') {
+      return projectsData.filter((p) =>
+        p.technologies.some(
+          (t) =>
+            t.includes('Python') ||
+            t.includes('Flask') ||
+            t.includes('SQL') ||
+            t.includes('Git')
+        )
+      );
+    }
+    return projectsData;
+  }, [filter]);
 
   return (
-    <section
-      id="proyectos"
-      className="studio-section studio-projects-section"
-      aria-labelledby="projects-heading"
-    >
-      <div className="studio-container">
-        <header className="studio-section-header studio-projects-header">
-          <div className="studio-section-kicker-wrap">
-            <span className="studio-kicker-label">Proyectos Seleccionados · Archivo Técnico</span>
-          </div>
+    <section id="proyectos" className="sp-section sp-projects" aria-labelledby="projects-heading">
+      <div className="sp-container">
+        <div className="sp-section-row-head sp-reveal">
+          <header>
+            <p className="sp-eyebrow">Proyectos reales en producción y repositorio</p>
+            <h2 id="projects-heading" className="sp-section-title">
+              Sistemas de gestión, aplicaciones web y algoritmos
+            </h2>
+          </header>
 
-          <div className="studio-projects-title-row">
-            <div>
-              <h2 id="projects-heading" className="studio-sv-title">
-                {PROJ_HEAD_WORDS.map((word, idx) => (
-                  <span
-                    key={`${word}-${idx}`}
-                    className="studio-sv-word"
-                    style={{ '--w': idx } as React.CSSProperties}
-                  >
-                    <span>{word} </span>
-                  </span>
-                ))}
-                <span className="studio-sv-word" style={{ '--w': 3 } as React.CSSProperties}>
-                  <span className="studio-sv-wow">desarrolladas.</span>
-                </span>
-              </h2>
-              <p className="studio-section-lead">
-                Sistemas de gestión, aplicaciones web en producción y algoritmos construidos durante
-                mi formación. Alterna entre vista, arquitectura, especificación y formato móvil en
-                cada ventana.
-              </p>
-            </div>
-
-            <div className="studio-filter-group" role="group" aria-label="Filtrar por estado">
-              {(['Todos', 'Terminado', 'En desarrollo'] as StatusFilter[]).map((status) => {
-                const isSelected = statusFilter === status;
-                const count = counts[status] ?? 0;
-                return (
-                  <button
-                    key={status}
-                    type="button"
-                    className={`studio-filter-btn ${isSelected ? 'is-active' : ''}`}
-                    aria-pressed={isSelected}
-                    onClick={() => setStatusFilter(status)}
-                  >
-                    <span>{status}</span>
-                    <span className="studio-filter-count">{count}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </header>
-      </div>
-
-      {/* Bandas asimétricas protagonistas .studio-pj / .studio-pj-flip */}
-      <div className="studio-pj-stream">
-        {visibleProjects.map((project, index) => {
-          const isFlip = index % 2 === 1;
-          return (
-            <article
-              key={project.id}
-              id={`project-${project.id}`}
-              className={`studio-pj ${isFlip ? 'studio-pj-flip' : ''}`}
-              data-seen="true"
-              onPointerMove={handleWindowPointerMove}
-              onPointerLeave={handleWindowPointerLeave}
+          <div className="sp-filter-bar" role="group" aria-label="Filtrar proyectos">
+            <button
+              type="button"
+              aria-pressed={filter === 'all'}
+              className={`sp-filter-btn ${filter === 'all' ? 'is-active' : ''}`}
+              onClick={() => setFilter('all')}
             >
-              <div className="studio-pj-inner">
-                <div className="studio-pj-text" data-at="0.06">
-                  <div className="studio-pj-badges-row">
-                    <div className="studio-pj-title-lockup">
-                      <span className="studio-pj-mark" aria-hidden="true">
-                        <ProjectLogo projectId={project.id} size={22} />
-                      </span>
-                      <h3 className="studio-pj-title">{project.title}</h3>
-                    </div>
+              Todos ({projectsData.length})
+            </button>
+            <button
+              type="button"
+              aria-pressed={filter === 'live'}
+              className={`sp-filter-btn ${filter === 'live' ? 'is-active' : ''}`}
+              onClick={() => setFilter('live')}
+            >
+              En producción
+            </button>
+            <button
+              type="button"
+              aria-pressed={filter === 'backend'}
+              className={`sp-filter-btn ${filter === 'backend' ? 'is-active' : ''}`}
+              onClick={() => setFilter('backend')}
+            >
+              Python · SQL · Ingeniería
+            </button>
+          </div>
+        </div>
 
-                    <span
-                      className={`studio-project-status ${
-                        project.status === 'Terminado' ? 'is-done' : 'is-wip'
-                      }`}
-                    >
-                      {project.status}
-                    </span>
-                  </div>
-
-                  <p className="studio-pj-subtitle">{project.subtitle}</p>
-                  <p className="studio-pj-line">{project.problem}</p>
-                  <p className="studio-pj-kind">{project.category}</p>
-
-                  <div className="studio-project-stack-wrap" aria-label="Tecnologías usadas">
-                    {project.technologies.map((tech) => (
-                      <span key={tech} className="studio-stack-chip">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="studio-project-actions">
-                    {project.demoUrl && (
-                      <a
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="studio-pj-visit"
-                      >
-                        <span>Visitar sitio</span>
-                        <ArrowUpRightIcon size={15} className="studio-rg-arrow" />
-                      </a>
-                    )}
-
-                    {project.repoUrl && (
-                      <a
-                        href={project.repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={
-                          project.demoUrl ? 'studio-btn-glass' : 'studio-pj-visit studio-pj-repo'
-                        }
-                      >
-                        <GitHubIcon size={15} />
-                        <span>Código en GitHub</span>
-                        <ArrowUpRightIcon size={14} className="studio-rg-arrow" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                <div className="studio-pj-window-stage">
-                  <ProjectWindowMockup project={project} />
-                </div>
-              </div>
-            </article>
-          );
-        })}
+        <div className="sp-projects-grid">
+          {filteredProjects.map((project) => (
+            <ProjectCard key={project.id} project={project} calmMode={calmMode} />
+          ))}
+        </div>
       </div>
     </section>
   );

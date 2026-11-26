@@ -37,3 +37,6 @@ __pycache__/
 # Antigravity agent directories
 .agent/
 
+# Physical safety backup
+_backup_original/
+

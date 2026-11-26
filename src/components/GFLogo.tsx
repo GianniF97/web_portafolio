@@ -1,17 +1,15 @@
 import React, { memo, useId } from 'react';
-import { Monogram3D } from './Monogram3D';
 
 interface GFLogoProps {
   className?: string;
   size?: number;
   showSubtitle?: boolean;
-  variant?: 'navbar' | 'hero' | 'footer' | 'watermark' | 'monolith';
+  variant?: 'navbar' | 'hero' | 'footer' | 'watermark';
 }
 
 /**
  * Identidad visual tecnológica GF:
  * - navbar / hero / footer / watermark: monograma octogonal biselado en cromo e iridiscencia.
- * - monolith: emblema GF esculpido en 3D real con WebGL / Three.js.
  */
 export const GFLogo: React.FC<GFLogoProps> = memo(
   ({ className = '', size = 38, showSubtitle = true, variant = 'navbar' }) => {
@@ -19,10 +17,6 @@ export const GFLogo: React.FC<GFLogoProps> = memo(
     const chromeGradId = `gf-chrome-${uid}`;
     const iridescentGradId = `gf-irid-${uid}`;
     const frameGradId = `gf-frame-${uid}`;
-
-    if (variant === 'monolith') {
-      return <Monogram3D className={className} />;
-    }
 
     const svgContent = (
       <svg

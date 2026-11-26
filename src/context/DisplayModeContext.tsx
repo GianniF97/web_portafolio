@@ -24,9 +24,18 @@ const DisplayModeContext = createContext<DisplayModeContextValue>({
  * Proveedor de accesibilidad y rendimiento gráfico:
  * - calmMode: desactiva animaciones de scroll, tipografía cinética y física continua.
  * - liteMode: alternativa ligera para equipos de menor rendimiento.
- * - Solo persiste en localStorage cuando las preferencias de privacidad lo permiten.
+ * - Responde dinámicamente a cambios del sistema operativo en prefers-reduced-motion.
  */
 export const DisplayModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [hasExplicitCalm, setHasExplicitCalm] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      return window.localStorage.getItem(CALM_STORAGE_KEY) !== null;
+    } catch {
+      return false;
+    }
+  });
+
   const [calmMode, setCalmMode] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     try {
@@ -49,10 +58,20 @@ export const DisplayModeProvider: React.FC<{ children: React.ReactNode }> = ({ c
     return false;
   });
 
-  const syncStorage = useCallback((nextCalm: boolean, nextLite: boolean) => {
+  useEffect(() => {
+    if (typeof window === 'undefined' || hasExplicitCalm) return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onChange = (e: MediaQueryListEvent) => setCalmMode(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [hasExplicitCalm]);
+
+  const syncStorage = useCallback((nextCalm: boolean, nextLite: boolean, explicit: boolean) => {
     try {
       if (canPersistPreferencesStorage()) {
-        window.localStorage.setItem(CALM_STORAGE_KEY, String(nextCalm));
+        if (explicit) {
+          window.localStorage.setItem(CALM_STORAGE_KEY, String(nextCalm));
+        }
         window.localStorage.setItem(LITE_STORAGE_KEY, String(nextLite));
       } else {
         window.localStorage.removeItem(CALM_STORAGE_KEY);
@@ -67,18 +86,19 @@ export const DisplayModeProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const root = document.documentElement;
     root.setAttribute('data-calm-mode', calmMode ? 'true' : 'false');
     root.setAttribute('data-lite-mode', liteMode ? 'true' : 'false');
-    syncStorage(calmMode, liteMode);
-  }, [calmMode, liteMode, syncStorage]);
+    syncStorage(calmMode, liteMode, hasExplicitCalm);
+  }, [calmMode, liteMode, hasExplicitCalm, syncStorage]);
 
   useEffect(() => {
     const handleConsentChange = () => {
-      syncStorage(calmMode, liteMode);
+      syncStorage(calmMode, liteMode, hasExplicitCalm);
     };
     window.addEventListener(CONSENT_UPDATED_EVENT, handleConsentChange);
     return () => window.removeEventListener(CONSENT_UPDATED_EVENT, handleConsentChange);
-  }, [calmMode, liteMode, syncStorage]);
+  }, [calmMode, liteMode, hasExplicitCalm, syncStorage]);
 
   const toggleCalmMode = useCallback(() => {
+    setHasExplicitCalm(true);
     setCalmMode((prev) => !prev);
   }, []);
 
